@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Clavern • Net Worth Profile</title>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'crypto-black': '#0a0b0d',
+            'crypto-blue': '#00d4ff',
+            'crypto-purple': '#8a2be2',
+            'crypto-gray': '#1a1b1f',
+            'crypto-card': '#131418',
+          },
+          fontFamily: {
+            'mono': ['"SF Mono"', 'Monaco', 'Consolas', 'monospace'],
+            'display': ['"Space Grotesk"', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+            'scan': 'scan 3s linear infinite',
+          },
+          keyframes: {
+            'pulse-glow': {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0.7 },
+            },
+            'scan': {
+              '0%': { transform: 'translateY(-100%)' },
+              '100%': { transform: 'translateY(400%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #0a0b0d;
+    }
+    
+    .crypto-border {
+      border: 1px solid transparent;
+      background: linear-gradient(#0a0b0d, #0a0b0d) padding-box,
+                  linear-gradient(135deg, #00d4ff, #8a2be2) border-box;
+    }
+    
+    .data-point {
+      background: linear-gradient(90deg, rgba(0,212,255,0.1) 0%, rgba(138,43,226,0.1) 100%);
+    }
+    
+    .glow {
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+    
+    .matrix-bg {
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
+    }
+  </style>
+</head>
+<body class="text-white matrix-bg min-h-screen flex items-center justify-center p-4">
+  
+  <!-- MAIN PROFILE CARD -->
+  <div class="crypto-border rounded-2xl max-w-2xl w-full overflow-hidden glow">
+    
+    <!-- SCANNER LINE EFFECT -->
+    <div class="relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-scan z-10"></div>
+      
+      <!-- HEADER -->
+      <div class="p-8 bg-gradient-to-b from-crypto-card to-black">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <div class="flex items-center gap-4">
+              <div class="w-20 h-20 rounded-full border-2 border-cyan-500 overflow-hidden">
+                <div class="w-full h-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
+                  <span class="text-3xl font-bold">C</span>
+                </div>
+              </div>
+              <div>
+                <h1 class="text-3xl md:text-4xl font-bold">Clavern</h1>
+                <p class="text-gray-400 font-mono text-sm mt-1">@clavern_zk • Age 22</p>
+                <div class="flex items-center gap-2 mt-2">
+                  <span class="px-3 py-1 bg-cyan-900/30 text-cyan-400 rounded-full text-xs font-mono">Trader</span>
+                  <span class="px-3 py-1 bg-purple-900/30 text-purple-400 rounded-full text-xs font-mono">Builder</span>
+                  <span class="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-xs font-mono">Visionary</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- VERIFICATION BADGE -->
+          <div class="mt-4 md:mt-0">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-900/30 to-purple-900/30 border border-cyan-500/30">
+              <i class="fas fa-shield-check text-cyan-400"></i>
+              <span class="font-mono text-sm">ZK-Proof Verified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- NET WORTH DISPLAY -->
+      <div class="p-8 border-t border-gray-800">
+        <div class="text-center mb-8">
+          <p class="text-gray-400 font-mono text-sm mb-2">NET WORTH (LIVE)</p>
+          <div class="flex items-baseline justify-center gap-2">
+            <span class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">$4.27M</span>
+            <span class="text-green-400 font-mono text-lg">+12.4%</span>
+          </div>
+          <p class="text-gray-500 text-sm mt-2 font-mono">≈ 213.5 BTC • ≈ 1,847.3 ETH</p>
+        </div>
+        
+        <!-- ASSETS BREAKDOWN -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div class="data-point p-4 rounded-xl">
+            <p class="text-gray-400 text-sm font-mono">LIQUID</p>
+            <p class="text-2xl font-bold">$2.81M</p>
+            <div class="h-2 bg-gray-800 rounded-full mt-2 overflow-hidden">
+              <div class="h-full bg-cyan-500 rounded-full" style="width: 65%"></div>
+            </div>
+          </div>
+          
+          <div class="data-point p-4 rounded-xl">
+            <p class="text-gray-400 text-sm font-mono">DIGITAL ASSETS</p>
+            <p class="text-2xl font-bold">$892K</p>
+            <div class="h-2 bg-gray-800 rounded-full mt-2 overflow-hidden">
+              <div class="h-full bg-purple-500 rounded-full" style="width: 21%"></div>
+            </div>
+          </div>
+          
+          <div class="data-point p-4 rounded-xl">
+            <p class="text-gray-400 text-sm font-mono">VENTURE STAKE</p>
+            <p class="text-2xl font-bold">$567K</p>
+            <div class="h-2 bg-gray-800 rounded-full mt-2 overflow-hidden">
+              <div class="h-full bg-green-500 rounded-full" style="width: 13%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- LIVE METRICS -->
+        <div class="border border-gray-800 rounded-xl p-6 mb-8">
+          <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <i class="fas fa-wave-square text-cyan-400"></i>
+            LIVE TRADING METRICS
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p class="text-gray-400 text-sm font-mono">WIN RATE</p>
+              <p class="text-xl font-bold text-green-400">74.3%</p>
+            </div>
+            <div>
+              <p class="text-gray-400 text-sm font-mono">SHARPE</p>
+              <p class="text-xl font-bold text-cyan-400">2.41</p>
+            </div>
+            <div>
+              <p class="text-gray-400 text-sm font-mono">MAX DD</p>
+              <p class="text-xl font-bold text-yellow-400">-8.2%</p>
+            </div>
+            <div>
+              <p class="text-gray-400 text-sm font-mono">ALPHA</p>
+              <p class="text-xl font-bold text-purple-400">+19.7%</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ACTIVE PROJECTS -->
+        <div>
+          <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <i class="fas fa-bolt text-yellow-400"></i>
+            ACTIVE PROJECTS
+          </h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-900/50">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-900 flex items-center justify-center">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                  <p class="font-bold">AlphaFeed</p>
+                  <p class="text-gray-400 text-sm font-mono">Social Trading Platform</p>
+                </div>
+              </div>
+              <span class="font-mono text-cyan-400">$1.2M估值</span>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-900/50">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-900 flex items-center justify-center">
+                  <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                  <p class="font-bold">Agri.AI</p>
+                  <p class="text-gray-400 text-sm font-mono">Precision Farming AI</p>
+                </div>
+              </div>
+              <span class="font-mono text-purple-400">种子阶段</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CRYPTO SIGNATURE -->
+        <div class="mt-8 pt-6 border-t border-gray-800">
+          <p class="text-gray-500 text-center font-mono text-sm">
+            Profile signed: 0xcl4v3rn • Last updated: <span class="text-cyan-400">Live</span>
+          </p>
+          <p class="text-gray-600 text-center font-mono text-xs mt-2">
+            0x891f3a7a5b387c2c5c6d1c4f8a3e2b1 • 区块: #18,472,912
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
