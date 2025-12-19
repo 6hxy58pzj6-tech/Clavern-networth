@@ -65,8 +65,8 @@
 </head>
 <body class="dark:bg-glow-dark bg-gray-50 text-gray-900 dark:text-white">
     
-    <!-- PASSWORD PROTECTION SCREEN -->
-    <div id="login-screen" class="password-screen fixed inset-0 z-50 flex items-center justify-center">
+    
+    <creen fixed inset-0 z-50 flex items-center justify-center">
         <div class="text-center p-8 rounded-3xl glow-border max-w-md w-full mx-4">
             <div class="w-24 h-24 rounded-full bg-gradient-to-br from-partner-1 via-synergy to-partner-2 flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-lock text-white text-3xl"></i>
@@ -81,18 +81,7 @@
                        maxlength="6"
                        oninput="this.value = this.value.toUpperCase()">
                 
-                <button onclick="checkPassword()" 
-                        class="w-full p-4 bg-gradient-to-r from-partner-1 to-synergy rounded-xl font-bold hover:opacity-90 transition">
-                    Unlock Dashboard
-                </button>
-                
-                <div class="text-sm text-gray-500 mt-6">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Enter the 6-digit code you both agreed upon
-                </div>
-            </div>
-        </div>
-    </div>
+            
     
     <!-- MAIN DASHBOARD (HIDDEN UNTIL LOGIN) -->
     <div id="dashboard" class="hidden">
