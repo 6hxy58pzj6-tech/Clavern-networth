@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kangara Command | Elite Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #0a0a0a;
+            --secondary-dark: #1a1a1a;
+            --accent-gold: #d4af37;
+            --accent-crimson: #dc143c;
+            --accent-royal: #4169e1;
+            --glow-gold: rgba(212, 175, 55, 0.3);
+            --glow-crimson: rgba(220, 20, 60, 0.2);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #e5e5e5;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .imperial-card {
+            background: linear-gradient(145deg, rgba(26, 26, 26, 0.95) 0%, rgba(20, 20, 20, 0.98) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .imperial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+        }
+        
+        .imperial-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .crown-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-live { background: #00ff00; box-shadow: 0 0 10px #00ff00; }
+        .status-warning { background: #ffaa00; box-shadow: 0 0 10px #ffaa00; }
+        .status-critical { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        
+        .glowing-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--secondary-dark), var(--secondary-dark)) padding-box,
+                        linear-gradient(45deg, var(--accent-gold), var(--accent-crimson)) border-box;
+        }
+        
+        .performance-ring {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+        
+        .ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 10;
+        }
+        
+        .ring-progress {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        
+        .metric-badge {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .data-stream {
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stream-item {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            animation: stream-up 20s linear infinite;
+        }
+        
+        @keyframes stream-up {
+            0% { transform: translateY(300px); }
+            100% { transform: translateY(-300px); }
+        }
+        
+        .wealth-gauge {
+            height: 20px;
+            background: linear-gradient(90deg, #1a3a1a 0%, #4caf50 50%, #1a3a1a 100%);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gauge-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #ffd700 100%);
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .alert-flash {
+            animation: alert-flash 2s infinite;
+        }
+        
+        @keyframes alert-flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Top Command Bar -->
+    <div class="border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold-500 to-crimson-600 flex items-center justify-center">
+                            <span class="text-xl font-bold">SK</span>
+                            <div class="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold crown-gradient">STANLEY KANGARA</h1>
+                        <p class="text-gray-400 text-sm">Empire Command Center • Last updated: Just now</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                        <div class="text-sm text-gray-400">Prime Window</div>
+                        <div class="text-xl font-bold text-green-400">3.2 Years Remaining</div>
+                    </div>
+                    <button class="px-6 py-2 glowing-border rounded-lg font-bold hover:bg-opacity-20 transition-all">
+                        <i class="fas fa-crown mr-2"></i>Command Mode
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Executive Summary Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Net Worth Pulse -->
+            <div class="imperial-card p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-gray-400 text-sm">Imperial Treasury</div>
+                        <div class="text-3xl font-bold mt-2 crown-gradient">$87.4M</div>
+                        <div class="flex items-center mt-2">
+                            <span class="status-indicator status-live"></span>
+                            <span class="text-green-400 text-sm">+2.4% Today</span>
+                        </div>
+                    </div>
+                    <div class="performance-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="50"></circle>
+                            <circle class="ring-progress" cx="60" cy="60" r="50" 
+                                    stroke="url(#gold-gradient)" 
+                                    stroke-dasharray="314" 
+                                    stroke-dashoffset="62.8"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-xl font-bold">80%</div>
+                                <div class="text-xs text-gray-400">Liquid</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="wealth-gauge">
+                        <div class="gauge-fill" style="width: 80%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs mt-2">
+                        <span>Liquid: $69.9M</span>
+                        <span>Assets: $17.5M</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Core -->
+            <div class="imperial-card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-gray-400 text-sm">Performance Core</div>
+                        <div class="text-xl font-bold">Readiness: 94%</div>
+                    </div>
+                    <div class="metric-badge">Peak Window</div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-3 bg-gray-900 rounded-lg">
+                        <div class="text-2xl font-bold text-green-400">18.7</div>
+                        <div class="text-xs text-gray-400">VO₂ Max</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-900 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-400">8.2</div>
+                        <div class="text-xs text-gray-400">Sleep Score</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-900 rounded-lg">
+                        <div class="text-2xl font-bold text-yellow-400">92%</div>
+                        <div class="text-xs text-gray-400">Recovery</div>
+                    </div>
+                    <div class="text-center p-3 bg-gray-900 rounded-lg">
+                        <div class="text-2xl font-bold text-red-400">Low</div>
+                        <div class="text-xs text-gray-400">Injury Risk</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Value -->
+            <div class="imperial-card p-6">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-gray-400 text-sm">Brand Empire</div>
+                        <div class="text-2xl font-bold mt-2">$14.2M</div>
+                        <div class="text-sm text-gray-400 mt-1">Annual Value</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-green-400 text-lg">↑ 18%</div>
+                        <div class="text-xs text-gray-400">This Quarter</div>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span>Social Influence</span>
+                        <span class="font-bold">8.9/10</span>
+                    </div>
+                    <div class="w-full bg-gray-800 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" style="width: 89%"></div>
+                    </div>
+                    <div class="flex justify-between text-sm mt-3">
+                        <span>Sentiment Score</span>
+                        <span class="font-bold text-green-400">92% Positive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critical Alerts -->
+            <div class="imperial-card p-6 border-l-4 border-crimson-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-crimson-500 text-xl mr-3"></i>
+                        <div>
+                            <div class="text-gray-400 text-sm">Command Alerts</div>
+                            <div class="text-xl font-bold">3 Active</div>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-crimson-900 flex items-center justify-center alert-flash">
+                        <span class="font-bold">3</span>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="status-indicator status-critical mr-2"></span>
+                            <span class="text-sm">Contract Review</span>
+                        </div>
+                        <span class="text-xs text-gray-400">48h</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="status-indicator status-warning mr-2"></span>
+                            <span class="text-sm">Media Obligation</span>
+                        </div>
+                        <span class="text-xs text-gray-400">Tomorrow</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Left Column: Performance & Health -->
+            <div class="space-y-6">
+                <!-- Biometrics Stream -->
+                <div class="imperial-card p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-heartbeat text-red-400 mr-3"></i>
+                        Live Biometrics
+                    </h2>
+                    <div class="data-stream">
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">Heart Rate</span>
+                                <span class="font-bold text-green-400">62 BPM</span>
+                            </div>
+                        </div>
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">HRV</span>
+                                <span class="font-bold text-blue-400">48 ms</span>
+                            </div>
+                        </div>
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">Core Temp</span>
+                                <span class="font-bold text-yellow-400">36.8°C</span>
+                            </div>
+                        </div>
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">Hydration</span>
+                                <span class="font-bold text-cyan-400">Optimal</span>
+                            </div>
+                        </div>
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">Muscle Load</span>
+                                <span class="font-bold text-orange-400">78%</span>
+                            </div>
+                        </div>
+                        <!-- Duplicate for animation -->
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">Heart Rate</span>
+                                <span class="font-bold text-green-400">62 BPM</span>
+                            </div>
+                        </div>
+                        <div class="stream-item">
+                            <div class="flex justify-between">
+                                <span class="text-sm">HRV</span>
+                                <span class="font-bold text-blue-400">48 ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Training Load -->
+                <div class="imperial-card p-6">
+                    <h2 class="text-xl font-bold mb-4">Training Load Management</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span>Weekly Load</span>
+                                <span class="font-bold">84% of Optimal</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-green-500 to-yellow-500 h-3 rounded-full" style="width: 84%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center p-4 bg-gray-900 rounded-lg">
+                                <div class="text-2xl font-bold">4.2</div>
+                                <div class="text-xs text-gray-400">Acute Load</div>
+                            </div>
+                            <div class="text-center p-4 bg-gray-900 rounded-lg">
+                                <div class="text-2xl font-bold">3.8</div>
+                                <div class="text-xs text-gray-400">Chronic Load</div>
+                            </div>
+                        </div>
+                        <div class="text-center p-3 bg-blue-900 rounded-lg">
+                            <div class="font-bold">Next Peak: 14 Days</div>
+                            <div class="text-xs text-gray-400">Optimal competition window</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Column: Wealth & Investments -->
+            <div class="space-y-6">
+                <!-- Investment Portfolio -->
+                <div class="imperial-card p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center justify-between">
+                        <span><i class="fas fa-chart-line text-green-400 mr-3"></i>Imperial Portfolio</span>
+                        <span class="text-sm text-green-400">+$1.2M Today</span>
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Tech Equity</span>
+                                <span class="font-bold">$28.4M</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Real Estate</span>
+                                <span class="font-bold">$19.7M</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Venture Capital</span>
+                                <span class="font-bold">$15.2M</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: 35%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Liquid Assets</span>
+                                <span class="font-bold">$24.1M</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-gold-500 to-yellow-500 h-2 rounded-full" style="width: 55%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Endorsement Dashboard -->
+                <div class="imperial-card p-6">
+                    <h2 class="text-xl font-bold mb-4">Brand Empire</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center mr-3">
+                                    <i class="fas fa-plane"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold">Emirates</div>
+                                    <div class="text-xs text-gray-400">$2.4M/year • 2 years left</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-green-400">Active</div>
+                                <div class="text-xs text-gray-400">95% compliance</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-red-900 flex items-center justify-center mr-3">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold">Nike</div>
+                                    <div class="text-xs text-gray-400">$4.8M/year • 4 years left</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-green-400">Active</div>
+                                <div class="text-xs text-gray-400">Bonus: $500k on win</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-green-900 flex items-center justify-center mr-3">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold">Mercedes</div>
+                                    <div class="text-xs text-gray-400">$3.1M/year • Renew in 6mo</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-yellow-400">Pending</div>
+                                <div class="text-xs text-gray-400">Negotiation phase</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Legacy & Lifestyle -->
+            <div class="space-y-6">
+                <!-- Legacy Timeline -->
+                <div class="imperial-card p-6">
+                    <h2 class="text-xl font-bold mb-4">Legacy Horizon</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 rounded-full bg-gold-500 mt-1 mr-3"></div>
+                            <div>
+                                <div class="font-bold">Post-Career Foundation</div>
+                                <div class="text-sm text-gray-400">$5M endowment • 2025 launch</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 rounded-full bg-blue-500 mt-1 mr-3"></div>
+                            <div>
+                                <div class="font-bold">Broadcasting Debut</div>
+                                <div class="text-sm text-gray-400">Sky Sports • 2026 contract</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 rounded-full bg-green-500 mt-1 mr-3"></div>
+                            <div>
+                                <div class="font-bold">Academy Launch</div>
+                                <div class="text-sm text-gray-400">Nairobi Campus • 2027</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-3 h-3 rounded-full bg-purple-500 mt-1 mr-3"></div>
+                            <div>
+                                <div class="font-bold">Autobiography</div>
+                                <div class="text-sm text-gray-400">Penguin Books • 2028 release</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 bg-gradient-to-r from-gray-900 to-black rounded-lg">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold crown-gradient">87</div>
+                            <div class="text-sm text-gray-400">Legacy Impact Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lifestyle Command -->
+                <div class="imperial-card p-6">
+                    <h2 class="text-xl font-bold mb-4">Lifestyle Command</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 bg-gray-900 rounded-lg">
+                            <i class="fas fa-jet-fighter text-2xl text-blue-400 mb-2"></i>
+                            <div class="font-bold">G650ER</div>
+                            <div class="text-xs text-gray-400">Ready in LHR</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-900 rounded-lg">
+                            <i class="fas fa-home text-2xl text-green-400 mb-2"></i>
+                            <div class="font-bold">4 Properties</div>
+                            <div class="text-xs text-gray-400">2 occupied</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-900 rounded-lg">
+                            <i class="fas fa-car text-2xl text-red-400 mb-2"></i>
+                            <div class="font-bold">9 Vehicles</div>
+                            <div class="text-xs text-gray-400">Service due: 1</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-900 rounded-lg">
+                            <i class="fas fa-users text-2xl text-purple-400 mb-2"></i>
+                            <div class="font-bold">14 Staff</div>
+                            <div class="text-xs text-gray-400">All active</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-gray-900 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="text-sm">Next Vacation</div>
+                                <div class="font-bold">Maldives • 14 Days</div>
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-gold-500 to-yellow-500 rounded-lg font-bold text-black">
+                                Book
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Status Bar -->
+        <div class="imperial-card p-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center">
+                        <span class="status-indicator status-live mr-2"></span>
+                        <span class="text-sm">All Systems Optimal</span>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <i class="fas fa-shield-alt mr-2"></i>Security: Maximum
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <i class="fas fa-sync-alt mr-2"></i>Last sync: 15 seconds ago
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <button class="px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="px-4 py-2 bg-gradient-to-r from-gold-600 to-yellow-600 rounded-lg font-bold">
+                        <i class="fas fa-crown mr-2"></i>Execute Command
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG Gradients -->
+    <svg width="0" height="0">
+        <defs>
+            <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#d4af37" />
+                <stop offset="50%" stop-color="#ffd700" />
+                <stop offset="100%" stop-color="#d4af37" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <script>
+        // Initialize performance rings
+        document.querySelectorAll('.ring-progress').forEach(ring => {
+            const percent = parseInt(ring.parentElement.nextElementSibling.querySelector('.text-xl').textContent);
+            const circumference = 2 * Math.PI * 50;
+            const offset = circumference - (percent / 100) * circumference;
+            ring.style.strokeDashoffset = offset;
+        });
+
+        // Update data stream animation
+        const streamItems = document.querySelectorAll('.stream-item');
+        streamItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.5}s`;
+        });
+
+        // Simulate live updates
+        function simulateLiveData() {
+            // Update biometrics
+            const biometrics = ['62 BPM', '65 BPM', '59 BPM', '48 ms', '52 ms', '36.8°C', '37.1°C'];
+            const bioElements = document.querySelectorAll('.data-stream .font-bold');
+            bioElements.forEach(el => {
+                if (el.textContent.includes('BPM') || el.textContent.includes('ms') || el.textContent.includes('°C')) {
+                    const newValue = biometrics[Math.floor(Math.random() * biometrics.length)];
+                    el.textContent = newValue;
+                    el.classList.add('text-green-400');
+                    setTimeout(() => el.classList.remove('text-green-400'), 1000);
+                }
+            });
+
+            // Update net worth with small fluctuations
+            const netWorthElement = document.querySelector('.crown-gradient');
+            const currentValue = parseFloat(netWorthElement.textContent.replace('$', '').replace('M', ''));
+            const change = (Math.random() - 0.5) * 0.1; // +/- 0.05M
+            const newValue = currentValue + change;
+            netWorthElement.textContent = '$' + newValue.toFixed(1) + 'M';
+            
+            // Update change indicator
+            const changeElement = document.querySelector('.text-green-400.text-sm');
+            const changePercent = ((change / currentValue) * 100).toFixed(2);
+            changeElement.textContent = (change >= 0 ? '+' : '') + changePercent + '% Today';
+            changeElement.className = change >= 0 ? 'text-green-400 text-sm' : 'text-red-400 text-sm';
+        }
+
+        // Update every 10 seconds
+        setInterval(simulateLiveData, 10000);
+
+        // Command mode button
+        document.querySelector('button:contains("Command Mode")').addEventListener('click', function() {
+            this.classList.toggle('bg-gradient-to-r');
+            this.classList.toggle('from-gold-500');
+            this.classList.toggle('to-yellow-500');
+            this.classList.toggle('text-black');
+            
+            if (this.classList.contains('text-black')) {
+                this.innerHTML = '<i class="fas fa-crown mr-2"></i>Command Active';
+                // Add active state to dashboard
+                document.querySelectorAll('.imperial-card').forEach(card => {
+                    card.classList.add('border-gold-500');
+                });
+            } else {
+                this.innerHTML = '<i class="fas fa-crown mr-2"></i>Command Mode';
+                document.querySelectorAll('.imperial-card').forEach(card => {
+                    card.classList.remove('border-gold-500');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
