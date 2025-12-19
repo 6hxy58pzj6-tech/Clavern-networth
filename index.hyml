@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Clavern • Live Crypto Net Worth</title>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'crypto-black': '#0a0b0d',
+            'crypto-blue': '#00d4ff',
+            'crypto-purple': '#8a2be2',
+            'crypto-green': '#00ff88',
+            'crypto-red': '#ff375f',
+            'crypto-gray': '#1a1b1f',
+            'crypto-card': '#131418',
+          },
+          animation: {
+            'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+            'scan': 'scan 3s linear infinite',
+            'float': 'float 6s ease-in-out infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #0a0b0d;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%2300d4ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2300d4ff'/%3E%3C/svg%3E") 16 16, auto;
+    }
+    
+    .crypto-border {
+      border: 1px solid transparent;
+      background: linear-gradient(#0a0b0d, #0a0b0d) padding-box,
+                  linear-gradient(135deg, #00d4ff, #8a2be2, #00ff88) border-box;
+    }
+    
+    .editable {
+      transition: all 0.3s ease;
+      border-bottom: 1px dashed rgba(0, 212, 255, 0.3);
+    }
+    
+    .editable:hover {
+      background: rgba(0, 212, 255, 0.1);
+      cursor: pointer;
+      border-bottom: 1px solid #00d4ff;
+    }
+    
+    .slider {
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(to right, #00d4ff, #8a2be2);
+      outline: none;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #00ff88;
+      cursor: pointer;
+      border: 2px solid #0a0b0d;
+      box-shadow: 0 0 10px #00ff88;
+    }
+    
+    .live-badge {
+      animation: pulse-glow 1.5s infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-4">
+  
+  <div class="crypto-border rounded-2xl max-w-2xl w-full overflow-hidden relative">
+    
+    <!-- LIVE DATA BADGE -->
+    <div class="absolute top-4 right-4 z-20">
+      <div class="live-badge px-3 py-1 bg-gradient-to-r from-green-900/40 to-cyan-900/40 border border-green-500/50 rounded-full flex items-center gap-2">
+        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+        <span class="text-xs font-mono">LIVE</span>
+      </div>
+    </div>
+    
+    <!-- REFRESH BUTTON -->
+    <button onclick="fetchCryptoPrices()" class="absolute top-4 left-4 z-20 px-3 py-1 bg-gray-900/80 border border-cyan-500/30 rounded-lg text-sm font-mono hover:bg-cyan-900/30 transition">
+      <i class="fas fa-sync-alt mr-2"></i>Refresh
+    </button>
+    
+    <!-- SCANNER LINE -->
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-scan z-10"></div>
+    
+    <div class="p-6 md:p-8">
+      
+      <!-- HEADER WITH CRYPTO PRICES -->
+      <div class="mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 class="text-3xl font-bold">Clavern</h1>
+            <p class="text-gray-400 font-mono">Digital Asset Portfolio</p>
+          </div>
+          
+          <!-- LIVE CRYPTO PRICES -->
+          <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-4 min-w-[250px]">
+            <div class="flex justify-between items-center mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center">
+                  <i class="fab fa-bitcoin text-orange-400 text-xs"></i>
+                </div>
+                <span class="font-mono">BTC</span>
+              </div>
+              <div class="text-right">
+                <div id="btc-price" class="font-bold">Loading...</div>
+                <div id="btc-change" class="text-xs font-mono">24h: --</div>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
+                  <i class="fab fa-ethereum text-purple-400 text-xs"></i>
+                </div>
+                <span class="font-mono">ETH</span>
+              </div>
+              <div class="text-right">
+                <div id="eth-price" class="font-bold">Loading...</div>
+                <div id="eth-change" class="text-xs font-mono">24h: --</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- NET WORTH DISPLAY (EDITABLE) -->
+      <div class="text-center mb-8 p-6 rounded-xl bg-gradient-to-b from-gray-900/50 to-transparent">
+        <p class="text-gray-400 font-mono text-sm mb-2">NET WORTH (USD)</p>
+        <div class="flex items-baseline justify-center gap-2">
+          <span class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-green-400 bg-clip-text text-transparent">
+            $<span id="net-worth" class="editable" onclick="editValue('net-worth')">4,271,850</span>
+          </span>
+          <span id="net-worth-change" class="text-green-400 font-mono text-lg">+2.4%</span>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-4 max-w-md mx-auto">
+          <div class="text-left">
+            <p class="text-gray-500 text-sm">≈ <span id="btc-amount" class="editable" onclick="editValue('btc-amount')">6.42</span> BTC</p>
+          </div>
+          <div class="text-right">
+            <p class="text-gray-500 text-sm">≈ <span id="eth-amount" class="editable" onclick="editValue('eth-amount')">54.8</span> ETH</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ASSET ALLOCATION (INTERACTIVE SLIDERS) -->
+      <div class="mb-8">
+        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+          <i class="fas fa-chart-pie text-cyan-400"></i>
+          ASSET ALLOCATION
+        </h3>
+        
+        <div class="space-y-6">
+          <!-- CRYPTO -->
+          <div>
+            <div class="flex justify-between mb-2">
+              <span class="font-mono">CRYPTO</span>
+              <span class="font-bold">$<span id="crypto-value">892,400</span></span>
+            </div>
+            <input type="range" min="0" max="100" value="21" class="slider w-full" id="crypto-slider" oninput="updateAllocation('crypto', this.value)">
+            <div class="flex justify-between text-sm text-gray-400">
+              <span id="crypto-percent">21%</span>
+              <span><span id="crypto-btc">12.8</span> BTC | <span id="crypto-eth">42.3</span> ETH</span>
+            </div>
+          </div>
+          
+          <!-- STOCKS -->
+          <div>
+            <div class="flex justify-between mb-2">
+              <span class="font-mono">STOCKS</span>
+              <span class="font-bold">$<span id="stocks-value">1,850,000</span></span>
+            </div>
+            <input type="range" min="0" max="100" value="43" class="slider w-full" id="stocks-slider" oninput="updateAllocation('stocks', this.value)">
+            <div class="text-sm text-gray-400">
+              <span id="stocks-percent">43%</span>
+            </div>
+          </div>
+          
+          <!-- REAL ESTATE -->
+          <div>
+            <div class="flex justify-between mb-2">
+              <span class="font-mono">REAL ESTATE</span>
+              <span class="font-bold">$<span id="realestate-value">1,200,000</span></span>
+            </div>
+            <input type="range" min="0" max="100" value="28" class="slider w-full" id="realestate-slider" oninput="updateAllocation('realestate', this.value)">
+            <div class="text-sm text-gray-400">
+              <span id="realestate-percent">28%</span>
+            </div>
+          </div>
+          
+          <!-- CASH -->
+          <div>
+            <div class="flex justify-between mb-2">
+              <span class="font-mono">LIQUID CASH</span>
+              <span class="font-bold">$<span id="cash-value">329,450</span></span>
+            </div>
+            <input type="range" min="0" max="100" value="8" class="slider w-full" id="cash-slider" oninput="updateAllocation('cash', this.value)">
+            <div class="text-sm text-gray-400">
+              <span id="cash-percent">8%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- PERFORMANCE METRICS -->
+      <div class="border border-gray-800 rounded-xl p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-lg flex items-center gap-2">
+            <i class="fas fa-chart-line text-green-400"></i>
+            PERFORMANCE
+          </h3>
+          <select id="timeframe" class="bg-gray-900 border border-gray-700 rounded px-3 py-1 text-sm font-mono" onchange="updatePerformance()">
+            <option value="24h">24H</option>
+            <option value="7d" selected>7D</option>
+            <option value="30d">30D</option>
+            <option value="1y">1Y</option>
+          </select>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-3 rounded-lg bg-gray-900/30">
+            <p- class="text-gray400 text-sm font-mono">RETURN</p>
+            <p id="return-value" class="text-2xl font-bold text-green-400">+12.4%</p>
+          </div>
+          <div class="text-center p-3 rounded-lg bg-gray-900/30">
+            <p class="text-gray-400 text-sm font-mono">VOLUME</p>
+            <p id="volume-value" class="text-2xl font-bold text-cyan-400">$2.1M</p>
+          </div>
+          <div class="text-center p-3 rounded-lg bg-gray-900/30">
+            <p class="text-gray-400 text-sm font-mono">RISK</p>
+            <p id="risk-value" class="text-2xl font-bold text-yellow-400">MEDIUM</p>
+          </div>
+          <div class="text-center p-3 rounded-lg bg-gray-900/30">
+            <p class="text-gray-400 text-sm font-mono">BETA</p>
+            <p id="beta-value" class="text-2xl font-bold text-purple-400">1.24</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- LAST UPDATED -->
+      <div class="text-center pt-6 border-t border-gray-800">
+        <p class="text-gray-500 font-mono text-sm">
+          <i class="fas fa-satellite-dish text-cyan-400 mr-2"></i>
+          Updated: <span id="update-time">--:--:--</span> UTC
+        </p>
+        <p class="text-gray-600 text-xs font-mono mt-2">
+          Data sourced from CoinGecko API • Portfolio auto-recalculates
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <div id="edit-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+    <div class="bg-gray-900 border border-cyan-500/30 rounded-xl p-6 max-w-md w-full">
+      <h3 class="text-xl font-bold mb-4">Edit Value</h3>
+      <input type="number" id="edit-input" class="w-full p-3 bg-gray-800 border border-cyan-500/50 rounded-lg mb-4 font-mono" placeholder="Enter new value...">
+      <div class="flex gap-3">
+        <button onclick="saveEdit()" class="flex-1 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 rounded-lg font-bold hover:opacity-90">Save</button>
+        <button onclick="closeEdit()" class="flex-1 py-3 bg-gray-800 border border-gray-700 rounded-lg">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // STATE
+    let currentEditElement = null;
+    let btcPrice = 0;
+    let ethPrice = 0;
+    
+    // LIVE CRYPTO PRICES FROM COINGECKO
+    async function fetchCryptoPrices() {
+      try {
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24h_change=true');
+        const data = await response.json();
+        
+        btcPrice = data.bitcoin.usd;
+        ethPrice = data.ethereum.usd;
+        
+        // Update display
+        document.getElementById('btc-price').innerHTML = `$${btcPrice.toLocaleString()}`;
+        document.getElementById('eth-price').innerHTML = `$${ethPrice.toLocaleString()}`;
+        
+        const btcChange = data.bitcoin.usd_24h_change.toFixed(2);
+        const ethChange = data.ethereum.usd_24h_change.toFixed(2);
+        
+        document.getElementById('btc-change').innerHTML = `24h: ${btcChange >= 0 ? '+' : ''}${btcChange}%`;
+        document.getElementById('eth-change').innerHTML = `24h: ${ethChange >= 0 ? '+' : ''}${ethChange}%`;
+        
+        // Color code
+        document.getElementById('btc-change').className = `text-xs font-mono ${btcChange >= 0 ? 'text-green-400' : 'text-red-400'}`;
+        document.getElementById('eth-change').className = `text-xs font-mono ${ethChange >= 0 ? 'text-green-400' : 'text-red-400'}`;
+        
+        updateNetWorth();
+        updateTime();
+      } catch (error) {
+        console.error('Failed to fetch prices:', error);
+        // Fallback values
+        document.getElementById('btc-price').innerHTML = '$66,423';
+        document.getElementById('eth-price').innerHTML = '$3,218';
+      }
+    }
+    
+    // UPDATE NET WORTH BASED ON CRYPTO HOLDINGS
+    function updateNetWorth() {
+      if (btcPrice === 0 || ethPrice === 0) return;
+      
+      const btcAmount = parseFloat(document.getElementById('btc-amount').innerText);
+      const ethAmount = parseFloat(document.getElementById('eth-amount').innerText);
+      const cryptoValue = btcAmount * btcPrice + ethAmount * ethPrice;
+      
+      // Update crypto allocation value
+      document.getElementById('crypto-value').innerText = Math.round(cryptoValue).toLocaleString();
+      
+      // Recalculate total net worth
+      const stocks = parseFloat(document.getElementById('stocks-value').innerText.replace(/,/g, ''));
+      const realestate = parseFloat(document.getElementById('realestate-value').innerText.replace(/,/g, ''));
+      const cash = parseFloat(document.getElementById('cash-value').innerText.replace(/,/g, ''));
+      
+      const total = cryptoValue + stocks + realestate + cash;
+      document.getElementById('net-worth').innerText = Math.round(total).toLocaleString();
+      
+      // Update percentages
+      updatePercentages();
+    }
+    
+    // ALLOCATION SLIDERS
+    function updateAllocation(type, percent) {
+      const total = parseFloat(document.getElementById('net-worth').innerText.replace(/,/g, ''));
+      const value = Math.round(total * percent / 100);
+      
+      // Update value display
+      document.getElementById(`${type}-value`).innerText = value.toLocaleString();
+      document.getElementById(`${type}-percent`).innerText = `${percent}%`;
+      
+      // For crypto, update BTC/ETH amounts
+      if (type === 'crypto' && btcPrice > 0) {
+        const cryptoValue = value;
+        // Assume 60% BTC, 40% ETH split
+        const btcValue = cryptoValue * 0.6;
+        const ethValue = cryptoValue * 0.4;
+        
+        document.getElementById('btc-amount').innerText = (btcValue / btcPrice).toFixed(2);
+        document.getElementById('eth-amount').innerText = (ethValue / ethPrice).toFixed(2);
+        document.getElementById('crypto-btc').innerText = (btcValue / btcPrice).toFixed(1);
+        document.getElementById('crypto-eth').innerText = (ethValue / ethPrice).toFixed(1);
+      }
+      
+      // Recalculate net worth
+      updateNetWorthFromAllocation();
+    }
+    
+    function updateNetWorthFromAllocation() {
+      const crypto = parseFloat(document.getElementById('crypto-value').innerText.replace(/,/g, ''));
+      const stocks = parseFloat(document.getElementById('stocks-value').innerText.replace(/,/g, ''));
+      const realestate = parseFloat(document.getElementById('realestate-value').innerText.replace(/,/g, ''));
+      const cash = parseFloat(document.getElementById('cash-value').innerText.replace(/,/g, ''));
+      
+      const total = crypto + stocks + realestate + cash;
+      document.getElementById('net-worth').innerText = Math.round(total).toLocaleString();
+      
+      updatePercentages();
+    }
+    
+    function updatePercentages() {
+      const total = parseFloat(document.getElementById('net-worth').innerText.replace(/,/g, ''));
+      const assets = ['crypto', 'stocks', 'realestate', 'cash'];
+      
+      assets.forEach(asset => {
+        const value = parseFloat(document.getElementById(`${asset}-value`).innerText.replace(/,/g, ''));
+        const percent = Math.round((value / total) * 100);
+        document.getElementById(`${asset}-percent`).innerText = `${percent}%`;
+        document.getElementById(`${asset}-slider`).value = percent;
+      });
+    }
+    
+    // EDITABLE VALUES
+    function editValue(elementId) {
+      currentEditElement = document.getElementById(elementId);
+      const currentValue = currentEditElement.innerText.replace(/,/g, '');
+      document.getElementById('edit-input').value = currentValue;
+      document.getElementById('edit-modal').classList.remove('hidden');
+      document.getElementById('edit-modal').classList.add('flex');
+    }
+    
+    function saveEdit() {
+      if (!currentEditElement) return;
+      
+      const newValue = document.getElementById('edit-input').value;
+      currentEditElement.innerText = parseFloat(newValue).toLocaleString();
+      
+      // If editing BTC/ETH amounts, update net worth
+      if (currentEditElement.id === 'btc-amount' || currentEditElement.id === 'eth-amount') {
+        updateNetWorth();
+      }
+      
+      closeEdit();
+    }
+    
+    function closeEdit() {
+      document.getElementById('edit-modal').classList.add('hidden');
+      document.getElementById('edit-modal').classList.remove('flex');
+      currentEditElement = null;
+    }
+    
+    // PERFORMANCE METRICS
+    function updatePerformance() {
+      const timeframe = document.getElementById('timeframe').value;
+      const returns = {
+        '24h': { return: '+0.8%', volume: '$142K', risk: 'LOW', beta: '0.92' },
+        '7d': { return: '+12.4%', volume: '$2.1M', risk: 'MEDIUM', beta: '1.24' },
+        '30d': { return: '+24.7%', volume: '$8.3M', risk: 'HIGH', beta: '1.56' },
+        '1y': { return: '+186.3%', volume: '$41.2M', risk: 'HIGH', beta: '1.81' }
+      };
+      
+      const data = returns[timeframe];
+      document.getElementById('return-value').innerText = data.return;
+      document.getElementById('volume-value').innerText = data.volume;
+      document.getElementById('risk-value').innerText = data.risk;
+      document.getElementById('beta-value').innerText = data.beta;
+    }
+    
+    // UPDATE TIME
+    function updateTime() {
+      const now = new Date();
+      const timeString = now.toUTCString().split(' ')[4];
+      document.getElementById('update-time').innerText = timeString;
+    }
+    
+    // AUTO-REFRESH
+    setInterval(fetchCryptoPrices, 30000); // Every 30 seconds
+    
+    // INITIALIZE
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchCryptoPrices();
+      updatePerformance();
+      updateTime();
+      
+      // Close modal on background click
+      document.getElementById('edit-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeEdit();
+      });
+    });
+  </script>
+</body>
+</html>
