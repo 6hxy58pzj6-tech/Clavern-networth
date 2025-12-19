@@ -476,10 +476,10 @@
 
     <script>
         // ========== PASSWORD PROTECTION ==========
-        const CORRECT_PASSWORD = "SYNC24"; // Change this to your actual code
+        const CORRECT_PASSWORD = ""; // Change this to your actual code
         
-        function checkPassword() {
-            const input = document.getElementById('password-input').value;
+    
+                document.getElementById('password-input').value;
             if (input === CORRECT_PASSWORD) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard').classList.remove('hidden');
@@ -672,7 +672,7 @@
         }
         
         function addMilestone() {
-            const input = document.getElementById('new-milestone');
+     document.getElementById('new-milestone');
             const title = input.value.trim();
             if (title) {
                 milestones.push({ title, progress: 0, completed: false });
