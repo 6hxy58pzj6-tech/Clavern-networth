@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venture Sync | Clavern & Deedee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'partner-1': '#00d4ff',  // Clavern - Cyber Blue
+                        'partner-2': '#ff6b9d',  // Deedee - Rose Pink
+                        'synergy': '#9d4edd',    // Partnership - Purple
+                        'glow-dark': '#0a0b0d',
+                        'glow-card': '#131418',
+                    },
+                    animation: {
+                        'pulse-synergy': 'pulse-synergy 3s ease-in-out infinite',
+                        'orbit': 'orbit 20s linear infinite',
+                        'float-1': 'float-1 7s ease-in-out infinite',
+                        'float-2': 'float-2 9s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        'pulse-synergy': {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.6 },
+                        },
+                        'orbit': {
+                            '0%': { transform: 'rotate(0deg) translateX(120px) rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg) translateX(120px) rotate(-360deg)' },
+                        },
+                        'float-1': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        'float-2': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px) translateX(10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Space Grotesk', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .glow-border {
+            border: 1px solid transparent;
+            background: linear-gradient(var(--bg-color, #0a0b0d), var(--bg-color, #0a0b0d)) padding-box,
+                        linear-gradient(135deg, var(--grad-1, #00d4ff), var(--grad-2, #9d4edd), var(--grad-3, #ff6b9d)) border-box;
+        }
+        
+        .partner-glow-1 {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .partner-glow-2 {
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.2);
+        }
+        
+        .synergy-glow {
+            box-shadow: 0 0 40px rgba(157, 78, 221, 0.3);
+        }
+        
+        .dark .synergy-glow {
+            box-shadow: 0 0 50px rgba(157, 78, 221, 0.4);
+        }
+        
+        .contrib-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #00d4ff 0%, #9d4edd 50%, #ff6b9d 100%);
+        }
+        
+        .dark {
+            --bg-color: #0a0b0d;
+            --grad-1: #00d4ff;
+            --grad-2: #9d4edd;
+            --grad-3: #ff6b9d;
+        }
+        
+        .light {
+            --bg-color: #f8fafc;
+            --grad-1: #0369a1;
+            --grad-2: #7c3aed;
+            --grad-3: #db2777;
+        }
+        
+        .orbit-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        
+        .orbiting-asset {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            animation: orbit 20s linear infinite;
+        }
+        
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+        
+        .nft-card {
+            background: linear-gradient(145deg, rgba(0,212,255,0.1), rgba(157,78,221,0.1), rgba(255,107,157,0.1));
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="dark:bg-glow-dark bg-gray-50 text-gray-900 dark:text-white">
+    
+    <!-- THEME TOGGLE -->
+    <div class="fixed top-4 right-4 z-50">
+        <button id="theme-toggle" class="p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:scale-110 transition">
+            <i class="fas fa-moon text-gray-800 dark:text-yellow-300"></i>
+        </button>
+    </div>
+    
+    <div class="min-h-screen p-4 md:p-8">
+        <!-- HEADER -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                <span class="bg-gradient-to-r from-partner-1 via-synergy to-partner-2 bg-clip-text text-transparent">
+                    Venture Sync
+                </span>
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">Clavern & Deedee • Partnership Portfolio</p>
+            <div class="flex justify-center items-center gap-6 mt-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-partner-1"></div>
+                    <span class="font-mono">Clavern (60%)</span>
+                </div>
+                <div class="w-12 h-1 bg-gradient-to-r from-partner-1 via-synergy to-partner-2 rounded"></div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-partner-2"></div>
+                    <span class="font-mono">Deedee (40%)</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MAIN DASHBOARD -->
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- PARTNERSHIP OVERVIEW -->
+            <div class="glow-border synergy-glow rounded-3xl p-6 md:p-8 mb-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- TOTAL JOINT NET WORTH -->
+                    <div class="text-center md:col-span-1">
+                        <p class="text-gray-500 dark:text-gray-400 mb-2">Joint Venture Value</p>
+                        <div class="text-4xl md:text-5xl font-bold">
+                            $<span id="joint-value">3,842,750</span>
+                        </div>
+                        <div class="mt-4">
+                            <div class="contrib-bar mb-2"></div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-partner-1">Clavern: $2,305,650</span>
+                                <span class="text-partner-2">Deedee: $1,537,100</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SYNERGY METRICS -->
+                    <div class="md:col-span-2">
+                        <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
+                            <i class="fas fa-atom text-synergy"></i>
+                            Synergy Metrics
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                                <p class="text-sm text-gray-500">Combined Alpha</p>
+                                <p class="text-2xl font-bold text-green-500">+24.7%</p>
+                            </div>
+                            <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                                <p class="text-sm text-gray-500">Risk Diversification</p>
+                                <p class="text-2xl font-bold text-blue-500">83%</p>
+                            </div>
+                            <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                                <p class="text-sm text-gray-500">Shared Projects</p>
+                                <p class="text-2xl font-bold text-purple-500">7</p>
+                            </div>
+                            <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                                <p class="text-sm text-gray-500">Time Together</p>
+                                <p class="text-2xl font-bold text-pink-500">2.4y</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PARTNER COMPARISON -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- CLAVERN -->
+                <div class="glow-border partner-glow-1 rounded-3xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-partner-1 to-cyan-900 flex items-center justify-center text-white font-bold">
+                                C
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl">Clavern</h3>
+                                <p class="text-gray-500 text-sm">Trader • Builder • Visionary</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold">$2,305,650</div>
+                            <div class="text-green-500 text-sm">+14.2% this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Crypto Assets</span>
+                                <span class="font-bold">$892K</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-partner-1 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Trading Capital</span>
+                                <span class="font-bold">$1.1M</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-cyan-600 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Venture Investments</span>
+                                <span class="font-bold">$315K</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-600 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 rounded-xl bg-gradient-to-r from-partner-1/10 to-transparent">
+                        <p class="text-sm"><i class="fas fa-quote-left text-partner-1 mr-2"></i>
+                        Building our future through disciplined trading and strategic ventures.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- DEEDEE -->
+                <div class="glow-border partner-glow-2 rounded-3xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-partner-2 to-pink-900 flex items-center justify-center text-white font-bold">
+                                D
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-xl">Deedee</h3>
+                                <p class="text-gray-500 text-sm">Strategist • Analyst • Partner</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold">$1,537,100</div>
+                            <div class="text-green-500 text-sm">+8.7% this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Real Estate</span>
+                                <span class="font-bold">$850K</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-partner-2 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Stock Portfolio</span>
+                                <span class="font-bold">$412K</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-pink-600 rounded-full" style="width: 55%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-sm">Business Equity</span>
+                                <span class="font-bold">$275K</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-rose-600 rounded-full" style="width: 38%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 rounded-xl bg-gradient-to-r from-partner-2/10 to-transparent">
+                        <p class="text-sm"><i class="fas fa-quote-left text-partner-2 mr-2"></i>
+                        Creating stability while exploring growth opportunities together.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SHARED ASSETS VISUALIZATION -->
+            <div class="glow-border rounded-3xl p-6 mb-8">
+                <h3 class="font-bold text-2xl mb-6 text-center">Shared Assets Orbit</h3>
+                <div class="orbit-container mx-auto relative">
+                    <!-- CENTER: PARTNERSHIP CORE -->
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <div class="w-24 h-24 rounded-full synergy-glow bg-gradient-to-br from-partner-1 via-synergy to-partner-2 flex items-center justify-center animate-pulse-synergy">
+                            <i class="fas fa-heart text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- ORBITING ASSETS -->
+                    <div class="orbiting-asset" style="animation-delay: -0s;">
+                        <div class="w-16 h-16 rounded-xl nft-card flex items-center justify-center">
+                            <i class="fab fa-bitcoin text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="orbiting-asset" style="animation-delay: -5s;">
+                        <div class="w-16 h-16 rounded-xl nft-card flex items-center justify-center">
+                            <i class="fas fa-home text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="orbiting-asset" style="animation-delay: -10s;">
+                        <div class="w-16 h-16 rounded-xl nft-card flex items-center justify-center">
+                            <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="orbiting-asset" style="animation-delay: -15s;">
+                        <div class="w-16 h-16 rounded-xl nft-card flex items-center justify-center">
+                            <i class="fas fa-gem text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-4 gap-4 mt-12">
+                    <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                        <p class="text-gray-500">Crypto Vault</p>
+                        <p class="text-xl font-bold">$412K</p>
+                        <p class="text-xs text-gray-500">Jointly managed</p>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                        <p class="text-gray-500">Vacation Home</p>
+                        <p class="text-xl font-bold">$650K</p>
+                        <p class="text-xs text-gray-500">Poland property</p>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                        <p class="text-gray-500">Investment Fund</p>
+                        <p class="text-xl font-bold">$1.2M</p>
+                        <p class="text-xs text-gray-500">AlphaFeed & Agri.AI</p>
+                    </div>
+                    <div class="text-center p-4 rounded-xl bg-gray-100 dark:bg-gray-900">
+                        <p class="text-gray-500">Digital Assets</p>
+                        <p class="text-xl font-bold">$180K</p>
+                        <p class="text-xs text-gray-500">NFTs & Crypto Art</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FUTURE PROJECTS TIMELINE -->
+            <div class="glow-border rounded-3xl p-6">
+                <h3 class="font-bold text-2xl mb-6">Future Ventures Timeline</h3>
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-partner-1 to-partner-2 flex items-center justify-center text-white">
+                            <i class="fas fa-ring"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Marriage & Legal Union</h4>
+                            <p class="text-gray-600 dark:text-gray-400">2025 • Combined estate planning, shared accounts, legal partnership.</p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="px-2 py-1 bg-partner-1/20 text-partner-1 rounded text-xs">Clavern + Deedee</span>
+                                <span class="px-2 py-1 bg-synergy/20 text-synergy rounded text-xs">Legal</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold">$75K</div>
+                            <div class="text-sm text-gray-500">Budget</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-700 flex items-center justify-center text-white">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">AgriTech Venture</h4>
+                            <p class="text-gray-600 dark:text-gray-400">2026 • AI-powered agriculture platform for emerging markets.</p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="px-2 py-1 bg-partner-1/20 text-partner-1 rounded text-xs">Tech</span>
+                                <span class="px-2 py-1 bg-partner-2/20 text-partner-2 rounded text-xs">Strategy</span>
+                                <span class="px-2 py-1 bg-green-500/20 text-green-500 rounded text-xs">Impact</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold">$500K</div>
+                            <div class="text-sm text-gray-500">Seed Round</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center text-white">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Space Tourism Fund</h4>
+                            <p class="text-gray-600 dark:text-gray-400">2028 • Investment vehicle for commercial space opportunities.</p>
+                            <div class="flex gap-2 mt-2">
+                                <span class="px-2 py-1 bg-partner-1/20 text-partner-1 rounded text-xs">Vision</span>
+                                <span class="px-2 py-1 bg-partner-2/20 text-partner-2 rounded text-xs">Analysis</span>
+                                <span class="px-2 py-1 bg-purple-500/20 text-purple-500 rounded text-xs">Frontier</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold">$2M</div>
+                            <div class="text-sm text-gray-500">Target</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FOOTER -->
+            <div class="text-center mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
+                <p class="text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-lock mr-2"></i>
+                    Partnership Dashboard • Updated in real-time • ZK-Proof Verified
+                </p>
+                <p class="text-sm text-gray-500 mt-2">
+                    This projection models 7% annual growth with 60/40 contribution ratio.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // THEME TOGGLE
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            document.body.classList.toggle('light');
+            
+            if (document.body.classList.contains('dark')) {
+                themeIcon.className = 'fas fa-moon text-yellow-300';
+            } else {
+                themeIcon.className = 'fas fa-sun text-orange-500';
+            }
+            
+            // Update CSS variables
+            updateThemeVariables();
+        });
+        
+        function updateThemeVariables() {
+            const root = document.documentElement;
+            if (document.body.classList.contains('dark')) {
+                root.style.setProperty('--bg-color', '#0a0b0d');
+                root.style.setProperty('--grad-1', '#00d4ff');
+                root.style.setProperty('--grad-2', '#9d4edd');
+                root.style.setProperty('--grad-3', '#ff6b9d');
+            } else {
+                root.style.setProperty('--bg-color', '#f8fafc');
+                root.style.setProperty('--grad-1', '#0369a1');
+                root.style.setProperty('--grad-2', '#7c3aed');
+                root.style.setProperty('--grad-3', '#db2777');
+            }
+        }
+        
+        // PARTNERSHIP CALCULATIONS
+        function updateJointValue() {
+            const clavernValue = 2305650;
+            const deedeeValue = 1537100;
+            const jointValue = clavernValue + deedeeValue;
+            
+            document.getElementById('joint-value').textContent = 
+                jointValue.toLocaleString();
+            
+            // Calculate monthly growth (simulated)
+            const growthRate = 0.012; // 1.2% monthly
+            const newJointValue = jointValue * (1 + growthRate);
+            
+            // Update with animation
+            setTimeout(() => {
+                document.getElementById('joint-value').textContent = 
+                    Math.round(newJointValue).toLocaleString();
+            }, 2000);
+        }
+        
+        // ANIMATE ORBITS WITH RANDOM SPEEDS
+        document.querySelectorAll('.orbiting-asset').forEach((asset, index) => {
+            const randomDuration = 15 + Math.random() * 10;
+            asset.style.animationDuration = `${randomDuration}s`;
+        });
+        
+        // INITIALIZE
+        document.addEventListener('DOMContentLoaded', () => {
+            updateThemeVariables();
+            updateJointValue();
+            
+            // Auto-update every 10 seconds
+            setInterval(updateJointValue, 10000);
+            
+            // Add floating animations
+            document.querySelectorAll('.glow-border').forEach((card, i) => {
+                if (i % 2 === 0) {
+                    card.classList.add('animate-float-1');
+                } else {
+                    card.classList.add('animate-float-2');
+                }
+            });
+        });
+        
+        // SIMULATED LIVE UPDATES
+        setInterval(() => {
+            const metrics = document.querySelectorAll('.text-green-500, .text-blue-500, .text-purple-500');
+            metrics.forEach(metric => {
+                if (metric.textContent.includes('+')) {
+                    const current = parseFloat(metric.textContent.match(/[\d.]+/)[0]);
+                    const change = (Math.random() - 0.5) * 0.5;
+                    const newValue = Math.max(0, current + change);
+                    metric.textContent = metric.textContent.replace(/[\d.]+/, newValue.toFixed(1));
+                    
+                    // Color code
+                    if (newValue > current) {
+                        metric.className = metric.className.replace(/text-(red|green|yellow|blue|purple|pink)-\d+/, 'text-green-500');
+                    } else if (newValue < current) {
+                        metric.className = metric.className.replace(/text-(red|green|yellow|blue|purple|pink)-\d+/, 'text-red-500');
+                    }
+                }
+            });
+        }, 8000);
+    </script>
+</body>
+</html>
