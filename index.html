@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// SYSTEM_SHUTDOWN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .terminal {
+            width: 700px;
+            border: 1px solid #0f0;
+            padding: 2rem;
+            background: rgba(0, 20, 0, 0.1);
+            box-shadow: 0 0 30px #0f0;
+        }
+
+        .header {
+            border-bottom: 1px solid #0f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+        }
+
+        .timestamp {
+            color: #0a0;
+            font-size: 0.9rem;
+        }
+
+        .content {
+            line-height: 1.6;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .cmd {
+            color: #0f0;
+        }
+
+        .response {
+            color: #0a0;
+            margin-bottom: 1rem;
+        }
+
+        .signoff {
+            margin-top: 2rem;
+            color: #0f0;
+            text-align: right;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="header">
+            <div class="title">root@system:~# shutdown -h now</div>
+            <div class="timestamp">[23:59:47]</div>
+        </div>
+
+        <div class="content">
+            <p class="cmd">> year_end_protocol --execute</p>
+            <p class="response">[OK] Cycle complete.</p>
+
+            <p class="cmd">> echo "2025 season terminated."</p>
+            <p class="response">2025 season terminated.</p>
+
+            <p class="cmd">> systemctl stop all</p>
+            <p class="response">[STOPPED] All processes halted.</p>
+
+            <p class="cmd">> final_transmission --send</p>
+            <p class="response">[SENT] Goodnight.</p>
+
+            <p class="cmd">> logout<span class="blink">_</span></p>
+        </div>
+
+        <div class="signoff">
+            ~/Clavern $ exit<br>
+            [Connection closed]
+        </div>
+    </div>
+
+    <script>
+        const lines = document.querySelectorAll('.cmd');
+        let delay = 0;
+
+        lines.forEach(line => {
+            line.style.opacity = 0;
+            setTimeout(() => {
+                line.style.transition = 'opacity 0.5s';
+                line.style.opacity = 1;
+            }, delay);
+            delay += 800;
+        });
+    </script>
+</body>
+</html>
