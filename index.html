@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-House Manager | Zimbabwe's Smart Property Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .property-card {
+            transition: transform 0.3s ease;
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+        }
+        .ecocash-badge {
+            background: linear-gradient(45deg, #FF6B00, #FF9500);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <span class="text-white font-bold">🏠</span>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">Eco-House Manager</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#features" class="text-gray-600 hover:text-blue-600">Features</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-blue-600">Pricing</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-blue-600">Success Stories</a>
+                    <a href="landlord-app.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Landlord Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white">
+        <div class="container mx-auto px-6 py-20">
+            <div class="md:flex items-center">
+                <div class="md:w-1/2">
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+                        Stop Chasing Rent.<br>Start Growing Your Portfolio.
+                    </h1>
+                    <p class="text-xl mt-6 opacity-90">
+                        Zimbabwe's first integrated property management platform.
+                        Automate Ecocash payments, tenant screening, and maintenance.
+                    </p>
+                    <div class="mt-8">
+                        <a href="landlord-app.html" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-bold text-lg mr-4 hover:bg-gray-100">
+                            Start Free Trial
+                        </a>
+                        <a href="#demo" class="border-2 border-white text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-white hover:text-blue-600">
+                            Watch Demo
+                        </a>
+                    </div>
+                    <div class="mt-8 flex items-center">
+                        <div class="ecocash-badge px-4 py-2 rounded-full text-white font-bold">
+                            Ecocash Integrated ✓
+                        </div>
+                        <span class="ml-4">Trusted by 250+ landlords nationwide</span>
+                    </div>
+                </div>
+                <div class="md:w-1/2 mt-10 md:mt-0 md:pl-10">
+                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3" 
+                         alt="Modern apartment building" 
+                         class="rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                Everything You Need in One Platform
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <span class="text-2xl">💸</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Auto Ecocash Payments</h3>
+                    <p class="text-gray-600">
+                        Send automatic invoices via SMS/WhatsApp. Receive instant payment confirmations. No more chasing tenants.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                        <span class="text-2xl">🔍</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Smart Tenant Screening</h3>
+                    <p class="text-gray-600">
+                        Digital applications, document verification, and reference checks to ensure quality tenants.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                        <span class="text-2xl">🛠️</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Maintenance Coordination</h3>
+                    <p class="text-gray-600">
+                        Tenant requests → Assign to verified contractors → Track completion → Automatic payment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                Simple 3-Step Setup
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                        1
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Add Property</h3>
+                    <p class="text-gray-600">Upload photos, set prices, list amenities (5 minutes)</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                        2
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Connect Ecocash</h3>
+                    <p class="text-gray-600">Link your Ecocash account for automatic payments (2 minutes)</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                        3
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Manage & Grow</h3>
+                    <p class="text-gray-600">Onboard tenants, track payments, expand portfolio (Ongoing)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section id="pricing" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                See Your Return on Investment
+            </h2>
+            <div class="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">Without Eco-House</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span>Monthly admin time:</span>
+                                <span class="text-red-600 font-bold">5 hours</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Average vacancy:</span>
+                                <span class="text-red-600 font-bold">15%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Late payments:</span>
+                                <span class="text-red-600 font-bold">25%</span>
+                            </div>
+                            <div class="border-t pt-4 mt-4">
+                                <div class="flex justify-between font-bold">
+                                    <span>Annual cost:</span>
+                                    <span class="text-red-600">$720</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">With Eco-House Pro</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span>Monthly admin time:</span>
+                                <span class="text-green-600 font-bold">30 minutes</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Average vacancy:</span>
+                                <span class="text-green-600 font-bold">5%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Late payments:</span>
+                                <span class="text-green-600 font-bold">5%</span>
+                            </div>
+                            <div class="border-t pt-4 mt-4">
+                                <div class="flex justify-between font-bold">
+                                    <span>Annual cost:</span>
+                                    <span class="text-green-600">$60</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 p-6 bg-blue-50 rounded-lg">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600">$660</div>
+                        <div class="text-gray-600">Net annual gain with Eco-House Pro</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Automate Your Property Management?</h2>
+            <p class="text-xl mb-8 opacity-90">Join 250+ landlords who trust Eco-House Manager</p>
+            <a href="landlord-app.html" class="bg-white text-blue-600 px-10 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 inline-block">
+                Start 3-Month Free Trial
+            </a>
+            <p class="mt-4 text-sm opacity-80">No credit card required • Cancel anytime</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="md:flex justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold">🏠</span>
+                        </div>
+                        <span class="text-xl font-bold">Eco-House Manager</span>
+                    </div>
+                    <p class="text-gray-400">Zimbabwe's first integrated property management platform</p>
+                </div>
+                <div class="mt-6 md:mt-0">
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <p class="text-gray-400">hello@ecohouse.co.zw</p>
+                    <p class="text-gray-400">+263 77 123 4567</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2024 Eco-House Manager. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
