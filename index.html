@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langton Logistics | CEO Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --secondary: #0f766e;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+        
+        .truck-glow {
+            animation: glow 2s infinite;
+        }
+        
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 5px); }
+            50% { filter: drop-shadow(0 0 15px); }
+            100% { filter: drop-shadow(0 0 5px); }
+        }
+        
+        .green-glow { filter: drop-shadow(0 0 10px #10b981); }
+        .yellow-glow { filter: drop-shadow(0 0 10px #f59e0b); }
+        .red-glow { filter: drop-shadow(0 0 10px #dc2626); }
+        
+        .driver-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .maintenance-bar {
+            height: 10px;
+            border-radius: 5px;
+            background: #e5e7eb;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .maintenance-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .route-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .notification-pulse {
+            animation: notificationPulse 1.5s infinite;
+        }
+        
+        @keyframes notificationPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .cost-bubble {
+            background: #fef3c7;
+            border: 2px dashed #f59e0b;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- CEO Header -->
+    <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                        <i class="fas fa-truck text-blue-900 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">LANGTON LOGISTICS</h1>
+                        <div class="flex items-center space-x-4 text-sm opacity-90">
+                            <span><i class="fas fa-user-tie mr-1"></i> Langton Nyamhunga (CEO)</span>
+                            <span><i class="fas fa-truck mr-1"></i> 6 Trucks • 4 Drivers</span>
+                            <span><i class="fas fa-map-marker-alt mr-1"></i> Harare, Zimbabwe</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm opacity-90">Today's Revenue</div>
+                    <div class="text-2xl font-bold">$1,250</div>
+                    <div class="text-xs opacity-80">Updated: Just now</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+        <!-- CEO Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Monthly Revenue</div>
+                        <div class="text-2xl font-bold mt-2" id="monthlyRevenue">$28,500</div>
+                    </div>
+                    <div class="text-green-500 text-2xl">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-sm">
+                    <span class="text-green-500">↑ 18%</span> from last month
+                </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Active Trucks</div>
+                        <div class="text-2xl font-bold mt-2" id="activeTrucks">4/6</div>
+                    </div>
+                    <div class="text-blue-500 text-2xl">
+                        <i class="fas fa-truck-moving"></i>
+                    </div>
+                </div>
+                <div class="mt-3 flex space-x-1">
+                    <div class="w-6 h-6 green-glow rounded-full flex items-center justify-center">
+                        <i class="fas fa-truck text-xs"></i>
+                    </div>
+                    <div class="w-6 h-6 green-glow rounded-full flex items-center justify-center">
+                        <i class="fas fa-truck text-xs"></i>
+                    </div>
+                    <div class="w-6 h-6 yellow-glow rounded-full flex items-center justify-center">
+                        <i class="fas fa-truck text-xs"></i>
+                    </div>
+                    <div class="w-6 h-6 red-glow rounded-full flex items-center justify-center">
+                        <i class="fas fa-truck text-xs"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Driver Commission</div>
+                        <div class="text-2xl font-bold mt-2" id="totalCommission">$4,275</div>
+                    </div>
+                    <div class="text-yellow-500 text-2xl">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-sm text-gray-500">
+                    15% of revenue • 4 drivers
+                </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Maintenance Cost</div>
+                        <div class="text-2xl font-bold mt-2 text-red-600" id="maintenanceCost">$2,150</div>
+                    </div>
+                    <div class="text-red-500 text-2xl">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-sm">
+                    <span class="text-red-500">↑ $450</span> this month
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Left: Fleet & Drivers -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Driver Updates -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">
+                            <i class="fas fa-users mr-2"></i>Driver Updates & Trip Management
+                        </h2>
+                        <button onclick="sendDriverAlert()" class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded">
+                            <i class="fas fa-bullhorn mr-1"></i>Send Alert
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Gina -->
+                        <div class="driver-card p-4 border-l-green-500">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                        <span class="text-green-600 font-bold text-lg">G</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">Gina • Truck #001 (5T)</div>
+                                        <div class="text-sm text-gray-500">+263 77 111 2222</div>
+                                        <div class="mt-2">
+                                            <span class="route-badge" id="ginaRoute">Harare → Bulawayo</span>
+                                            <span class="ml-2 text-sm text-gray-600" id="ginaPrice">$350</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-blue-600" id="ginaTotal">$4,850</div>
+                                    <div class="text-sm text-gray-500">Month to date</div>
+                                    <button onclick="updateDriverTrip('Gina')" class="mt-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                        Update Trip
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                                <div>
+                                    <div class="text-gray-500">Today's Trips:</div>
+                                    <div class="font-bold">1 trip</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Commission:</div>
+                                    <div class="font-bold text-green-600">$727.50</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Next Service:</div>
+                                    <div class="font-bold">7 days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tanaka -->
+                        <div class="driver-card p-4 border-l-blue-500">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <span class="text-blue-600 font-bold text-lg">T</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">Tanaka • Truck #002 (3T)</div>
+                                        <div class="text-sm text-gray-500">+263 77 222 3333</div>
+                                        <div class="mt-2">
+                                            <span class="route-badge" id="tanakaRoute">Harare → Mutare</span>
+                                            <span class="ml-2 text-sm text-gray-600" id="tanakaPrice">$280</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-blue-600" id="tanakaTotal">$3,920</div>
+                                    <div class="text-sm text-gray-500">Month to date</div>
+                                    <button onclick="updateDriverTrip('Tanaka')" class="mt-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                        Update Trip
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                                <div>
+                                    <div class="text-gray-500">Today's Trips:</div>
+                                    <div class="font-bold">2 trips</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Commission:</div>
+                                    <div class="font-bold text-green-600">$588.00</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Next Service:</div>
+                                    <div class="font-bold">3 days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Madzibaba -->
+                        <div class="driver-card p-4 border-l-purple-500">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <span class="text-purple-600 font-bold text-lg">M</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">Madzibaba • Truck #003 (5T)</div>
+                                        <div class="text-sm text-gray-500">+263 77 333 4444</div>
+                                        <div class="mt-2">
+                                            <span class="route-badge" id="madzibabaRoute">Bulawayo → Harare</span>
+                                            <span class="ml-2 text-sm text-gray-600" id="madzibabaPrice">$320</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-blue-600" id="madzibabaTotal">$5,120</div>
+                                    <div class="text-sm text-gray-500">Month to date</div>
+                                    <button onclick="updateDriverTrip('Madzibaba')" class="mt-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                        Update Trip
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                                <div>
+                                    <div class="text-gray-500">Today's Trips:</div>
+                                    <div class="font-bold">1 trip</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Commission:</div>
+                                    <div class="font-bold text-green-600">$768.00</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Next Service:</div>
+                                    <div class="font-bold">15 days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Rasta -->
+                        <div class="driver-card p-4 border-l-yellow-500">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <span class="text-yellow-600 font-bold text-lg">R</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">Rasta • Truck #004 (3T)</div>
+                                        <div class="text-sm text-gray-500">+263 77 444 5555</div>
+                                        <div class="mt-2">
+                                            <span class="route-badge" id="rastaRoute">Harare → Gweru</span>
+                                            <span class="ml-2 text-sm text-gray-600" id="rastaPrice">$220</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-bold text-blue-600" id="rastaTotal">$3,080</div>
+                                    <div class="text-sm text-gray-500">Month to date</div>
+                                    <button onclick="updateDriverTrip('Rasta')" class="mt-2 text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                        Update Trip
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+                                <div>
+                                    <div class="text-gray-500">Today's Trips:</div>
+                                    <div class="font-bold">0 trips</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Commission:</div>
+                                    <div class="font-bold text-green-600">$462.00</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Next Service:</div>
+                                    <div class="font-bold text-red-600">OVERDUE</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Truck Maintenance -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-6">
+                        <i class="fas fa-tools mr-2"></i>Truck Maintenance & Service Alerts
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Truck 001 -->
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold">Truck #001 (5T) • Gina</div>
+                                <div class="w-8 h-8 green-glow rounded-full flex items-center justify-center">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-sm text-gray-500">Service Due In:</div>
+                                <div class="font-bold">7 days</div>
+                            </div>
+                            <div class="maintenance-bar">
+                                <div class="maintenance-fill bg-green-500" style="width: 85%"></div>
+                            </div>
+                            <div class="mt-3">
+                                <button onclick="logMaintenanceCost('Truck #001')" class="w-full text-sm bg-gray-100 hover:bg-gray-200 py-2 rounded">
+                                    + Add Maintenance Cost
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Truck 002 -->
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold">Truck #002 (3T) • Tanaka</div>
+                                <div class="w-8 h-8 yellow-glow rounded-full flex items-center justify-center">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-sm text-gray-500">Service Due In:</div>
+                                <div class="font-bold text-yellow-600">3 days</div>
+                            </div>
+                            <div class="maintenance-bar">
+                                <div class="maintenance-fill bg-yellow-500" style="width: 30%"></div>
+                            </div>
+                            <div class="cost-bubble">
+                                <div class="text-sm font-bold">Recent Cost: $350</div>
+                                <div class="text-xs text-gray-600">Brake pads replacement</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Truck 003 -->
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold">Truck #003 (5T) • Madzibaba</div>
+                                <div class="w-8 h-8 green-glow rounded-full flex items-center justify-center">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-sm text-gray-500">Service Due In:</div>
+                                <div class="font-bold">15 days</div>
+                            </div>
+                            <div class="maintenance-bar">
+                                <div class="maintenance-fill bg-green-500" style="width: 60%"></div>
+                            </div>
+                            <div class="mt-3">
+                                <button onclick="logMaintenanceCost('Truck #003')" class="w-full text-sm bg-gray-100 hover:bg-gray-200 py-2 rounded">
+                                    + Add Maintenance Cost
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Truck 004 -->
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <div class="font-bold">Truck #004 (3T) • Rasta</div>
+                                <div class="w-8 h-8 red-glow rounded-full flex items-center justify-center">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="text-sm text-gray-500">Service Status:</div>
+                                <div class="font-bold text-red-600">OVERDUE - 2 days</div>
+                            </div>
+                            <div class="maintenance-bar">
+                                <div class="maintenance-fill bg-red-500" style="width: 5%"></div>
+                            </div>
+                            <div class="cost-bubble">
+                                <div class="text-sm font-bold">Urgent: $1,200 needed</div>
+                                <div class="text-xs text-gray-600">Engine repair required</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-red-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-red-700">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>Total Maintenance Cost This Month
+                                </div>
+                                <div class="text-sm text-red-600">Click trucks above to add costs</div>
+                            </div>
+                            <div class="text-2xl font-bold text-red-700" id="totalMaintenanceCost">$2,150</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: CEO Controls & Analytics -->
+            <div class="space-y-6">
+                <!-- CEO Quick Actions -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">
+                        <i class="fas fa-user-tie mr-2"></i>CEO Controls
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <button onclick="approveDriverPayment()" class="w-full text-left p-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100">
+                            <i class="fas fa-check-circle mr-2"></i>Approve Driver Payments
+                            <span class="notification-pulse inline-block ml-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                        
+                        <button onclick="addMaintenanceCost()" class="w-full text-left p-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100">
+                            <i class="fas fa-tools mr-2"></i>Add Maintenance Cost
+                        </button>
+                        
+                        <button onclick="viewDriverTotals()" class="w-full text-left p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">
+                            <i class="fas fa-calculator mr-2"></i>Calculate Month-End Totals
+                        </button>
+                        
+                        <button onclick="sendCEOAlert()" class="w-full text-left p-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100">
+                            <i class="fas fa-bullhorn mr-2"></i>Send Company Alert
+                        </button>
+                        
+                        <button onclick="generateCEORepot()" class="w-full text-left p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="fas fa-chart-bar mr-2"></i>Generate CEO Report
+                        </button>
+                        
+                        <button onclick="emergencyStop()" class="w-full text-left p-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>Emergency Stop (Truck #004)
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Financial Dashboard -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">Financial Dashboard</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-gray-500">Monthly Revenue Target</div>
+                            <div class="flex items-center">
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <span class="ml-2 font-bold">85%</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">$28,500 / $33,500</div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-500">Cost Breakdown</div>
+                            <div class="space-y-2 mt-2">
+                                <div class="flex justify-between text-sm">
+                                    <span>Fuel:</span>
+                                    <span class="font-bold text-red-600">$5,400</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Maintenance:</span>
+                                    <span class="font-bold text-red-600">$2,150</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Driver Commission:</span>
+                                    <span class="font-bold text-yellow-600">$4,275</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Other Costs:</span>
+                                    <span class="font-bold text-red-600">$1,150</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-3 bg-blue-50 rounded-lg">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-700" id="netProfit">$15,525</div>
+                                <div class="text-sm text-blue-600">Net Profit This Month</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <canvas id="profitChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Recent Alerts -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">
+                        <i class="fas fa-bell mr-2"></i>Recent Alerts
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+                            <div class="font-bold text-red-700">🚨 TRUCK #004 OVERDUE</div>
+                            <div class="text-sm text-red-600">Service overdue by 2 days • Engine repair needed</div>
+                            <div class="text-xs text-red-500 mt-1">2 hours ago</div>
+                        </div>
+                        
+                        <div class="p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                            <div class="font-bold text-yellow-700">⚠️ Tanaka Requested Payment</div>
+                            <div class="text-sm text-yellow-600">Commission: $588.00 • Awaiting approval</div>
+                            <div class="text-xs text-yellow-500 mt-1">5 hours ago</div>
+                        </div>
+                        
+                        <div class="p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                            <div class="font-bold text-green-700">✅ Gina Completed Trip</div>
+                            <div class="text-sm text-green-600">Harare→Bulawayo • $350 • Added to total</div>
+                            <div class="text-xs text-green-500 mt-1">Today, 10:30 AM</div>
+                        </div>
+                        
+                        <div class="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <div class="font-bold text-blue-700">📊 Monthly Target Update</div>
+                            <div class="text-sm text-blue-600">85% of revenue target achieved</div>
+                            <div class="text-xs text-blue-500 mt-1">Yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Driver Trip Log -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-xl font-bold mb-6">
+                <i class="fas fa-clipboard-list mr-2"></i>Driver Trip Log & Totals
+            </h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="text-left p-3 text-sm">Driver</th>
+                            <th class="text-left p-3 text-sm">Truck</th>
+                            <th class="text-left p-3 text-sm">Today's Trips</th>
+                            <th class="text-left p-3 text-sm">Month Total</th>
+                            <th class="text-left p-3 text-sm">Commission (15%)</th>
+                            <th class="text-left p-3 text-sm">Last Trip</th>
+                            <th class="text-left p-3 text-sm">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3 font-bold">Gina</td>
+                            <td class="p-3">#001 (5T)</td>
+                            <td class="p-3">1 trip • $350</td>
+                            <td class="p-3 font-bold text-blue-600">$4,850</td>
+                            <td class="p-3 font-bold text-green-600">$727.50</td>
+                            <td class="p-3">Harare→Bulawayo</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                    Active
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3 font-bold">Tanaka</td>
+                            <td class="p-3">#002 (3T)</td>
+                            <td class="p-3">2 trips • $500</td>
+                            <td class="p-3 font-bold text-blue-600">$3,920</td>
+                            <td class="p-3 font-bold text-green-600">$588.00</td>
+                            <td class="p-3">Harare→Mutare</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                    Active
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3 font-bold">Madzibaba</td>
+                            <td class="p-3">#003 (5T)</td>
+                            <td class="p-3">1 trip • $320</td>
+                            <td class="p-3 font-bold text-blue-600">$5,120</td>
+                            <td class="p-3 font-bold text-green-600">$768.00</td>
+                            <td class="p-3">Bulawayo→Harare</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                    Active
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 font-bold">Rasta</td>
+                            <td class="p-3">#004 (3T)</td>
+                            <td class="p-3">0 trips • $0</td>
+                            <td class="p-3 font-bold text-blue-600">$3,080</td>
+                            <td class="p-3 font-bold text-green-600">$462.00</td>
+                            <td class="p-3">Harare→Gweru</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
+                                    Maintenance
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="font-bold">CEO SUMMARY</div>
+                        <div class="text-sm text-gray-600">Total revenue across all drivers this month</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-blue-700" id="totalDriverRevenue">$16,970</div>
+                        <div class="text-sm text-gray-600">Total Commission: $2,545.50</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="font-bold">LANGTON LOGISTICS CEO DASHBOARD</div>
+                    <div class="text-sm text-gray-400">Logged in as: Langton Nyamhunga • Last updated: Just now</div>
+                </div>
+                <div class="text-sm text-gray-400">
+                    <div>Confidential • For CEO Eyes Only</div>
+                    <div class="mt-1">© 2024 Langton Logistics</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize charts
+        function initializeCharts() {
+            const ctx = document.getElementById('profitChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    datasets: [
+                        {
+                            label: 'Revenue',
+                            data: [4500, 5200, 6100, 9050, 3650],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Profit',
+                            data: [2250, 2600, 3050, 4525, 1825],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        // Driver Trip Update Function
+        function updateDriverTrip(driverName) {
+            const route = prompt(`${driverName}, enter your current route:\nExample: Harare→Bulawayo`);
+            const price = prompt('Trip price ($):');
+            
+            if (route && price) {
+                // Update UI
+                document.getElementById(driverName.toLowerCase() + 'Route').textContent = route;
+                document.getElementById(driverName.toLowerCase() + 'Price').textContent = '$' + price;
+                
+                // Update driver total
+                const currentTotalElement = document.getElementById(driverName.toLowerCase() + 'Total');
+                const currentTotal = parseFloat(currentTotalElement.textContent.replace('$', '').replace(',', '')) || 0;
+                const newTotal = currentTotal + parseFloat(price);
+                currentTotalElement.textContent = '$' + newTotal.toLocaleString();
+                
+                // Update monthly revenue
+                updateMonthlyRevenue(parseFloat(price));
+                
+                alert(`✅ ${driverName}'s trip updated!\nRoute: ${route}\nPrice: $${price}\nAdded to month total.`);
+                
+                // Add to alert log
+                addAlert(`${driverName} updated trip`, `${route} • $${price}`, 'green');
+            }
+        }
+
+        // Update Monthly Revenue
+        function updateMonthlyRevenue(amount) {
+            const revenueElement = document.getElementById('monthlyRevenue');
+            const commissionElement = document.getElementById('totalCommission');
+            const profitElement = document.getElementById('netProfit');
+            const driverRevenueElement = document.getElementById('totalDriverRevenue');
+            
+            const currentRevenue = parseFloat(revenueElement.textContent.replace('$', '').replace(',', '')) || 0;
+            const newRevenue = currentRevenue + amount;
+            revenueElement.textContent = '$' + newRevenue.toLocaleString();
+            
+            // Update commission (15%)
+            const commission = newRevenue * 0.15;
+            commissionElement.textContent = '$' + commission.toLocaleString();
+            
+            // Update profit (assuming 50% margin after expenses)
+            const profit = newRevenue * 0.5;
+            profitElement.textContent = '$' + profit.toLocaleString();
+            
+            // Update driver revenue
+            const currentDriverRevenue = parseFloat(driverRevenueElement.textContent.replace('$', '').replace(',', '')) || 0;
+            driverRevenueElement.textContent = '$' + (currentDriverRevenue + amount).toLocaleString();
+        }
+
+        // Maintenance Cost Functions
+        function logMaintenanceCost(truck) {
+            const cost = prompt(`Maintenance cost for ${truck} ($):`);
+            const description = prompt('Description (e.g., Brake pads, Engine repair):');
+            
+            if (cost && description) {
+                const maintenanceElement = document.getElementById('totalMaintenanceCost');
+                const currentCost = parseFloat(maintenanceElement.textContent.replace('$', '').replace(',', '')) || 0;
+                const newCost = currentCost + parseFloat(cost);
+                maintenanceElement.textContent = '$' + newCost.toLocaleString();
+                
+                alert(`Maintenance cost added for ${truck}:\n$${cost} - ${description}`);
+                
+                // Add to alert log
+                addAlert(`Maintenance: ${truck}`, `$${cost} • ${description}`, 'red');
+            }
+        }
+
+        function addMaintenanceCost() {
+            const truck = prompt('Truck number (e.g., #001):');
+            const cost = prompt('Maintenance cost ($):');
+            const description = prompt('Description:');
+            
+            if (truck && cost && description) {
+                logMaintenanceCost(truck);
+            }
+        }
+
+        // CEO Control Functions
+        function approveDriverPayment() {
+            const driver = prompt('Which driver to pay? (Gina, Tanaka, Madzibaba, Rasta)');
+            const amount = prompt('Amount to pay ($):');
+            
+            if (driver && amount) {
+                alert(`✅ Payment approved!\n${driver}: $${amount}\nPaid via Ecocash.`);
+                addAlert(`Payment approved`, `${driver}: $${amount}`, 'blue');
+            }
+        }
+
+        function viewDriverTotals() {
+            const report = `
+DRIVER MONTH-END TOTALS
+=======================
+Gina:      $4,850  (Commission: $727.50)
+Tanaka:    $3,920  (Commission: $588.00)
+Madzibaba: $5,120  (Commission: $768.00)
+Rasta:     $3,080  (Commission: $462.00)
+------------------------
+TOTAL:     $16,970 (Commission: $2,545.50)
+
+PAYMENT SCHEDULE:
+• Gina:      Paid
+• Tanaka:    Pending approval
+• Madzibaba: Paid  
+• Rasta:     On hold (truck maintenance)
+            `;
+            
+            alert(report);
+        }
+
+        function sendCEOAlert() {
+            const message = prompt('Alert message to all drivers:');
+            if (message) {
+                alert(`📢 Alert sent to all drivers:\n"${message}"`);
+                addAlert('CEO Alert', message, 'purple');
+            }
+        }
+
+        function sendDriverAlert() {
+            const driver = prompt('Which driver? (Gina, Tanaka, Madzibaba, Rasta, ALL)');
+            const message = prompt('Message:');
+            
+            if (driver && message) {
+                alert(`📢 Alert sent to ${driver}:\n"${message}"`);
+                addAlert(`Alert to ${driver}`, message, 'yellow');
+            }
+        }
+
+        function generateCEORepot() {
+            const report = `
+LANGTON LOGISTICS - CEO REPORT
+==============================
+Date: ${new Date().toLocaleDateString()}
+
+FLEET STATUS:
+• Active Trucks: 4/6
+• In Maintenance: 1 (Truck #004)
+• Service Due: 1 (Truck #002 in 3 days)
+
+FINANCIAL SUMMARY:
+• Monthly Revenue: $28,500
+• Driver Commission: $4,275 (15%)
+• Maintenance Cost: $2,150
+• Net Profit: $15,525 (54.5% margin)
+
+DRIVER PERFORMANCE:
+1. Madzibaba: $5,120 revenue (Best performer)
+2. Gina: $4,850 revenue
+3. Tanaka: $3,920 revenue  
+4. Rasta: $3,080 revenue (Truck issues)
+
+URGENT ACTIONS:
+1. Repair Truck #004 immediately ($1,200)
+2. Service Truck #002 in 3 days
+3. Approve Tanaka's commission payment
+4. Increase marketing for 3T trucks
+
+RECOMMENDATIONS:
+1. Consider hiring 2 more drivers
+2. Implement preventive maintenance schedule
+3. Increase rates by 10% next month
+            `;
+            
+            alert(report);
+            console.log(report);
+        }
+
+        function emergencyStop() {
+            if (confirm('🚨 EMERGENCY STOP TRUCK #004?\nThis will notify Rasta immediately.')) {
+                alert('Emergency stop initiated! Rasta has been notified to return to base.');
+                addAlert('EMERGENCY STOP', 'Truck #004 stopped', 'red');
+            }
+        }
+
+        // Helper function to add alerts
+        function addAlert(title, message, color) {
+            const colors = {
+                'green': 'bg-green-50 border-green-500 text-green-700',
+                'red': 'bg-red-50 border-red-500 text-red-700',
+                'blue': 'bg-blue-50 border-blue-500 text-blue-700',
+                'yellow': 'bg-yellow-50 border-yellow-500 text-yellow-700',
+                'purple': 'bg-purple-50 border-purple-500 text-purple-700'
+            };
+            
+            // In a real app, this would add to alerts section
+            console.log(`ALERT: ${title} - ${message}`);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            
+            // Auto-update time
+            setInterval(() => {
+                const timeElement = document.querySelector('.text-xs.opacity-80');
+                if (timeElement) {
+                    timeElement.textContent = 'Updated: ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }
+            }, 60000);
+        });
+    </script>
+</body>
+</html>
