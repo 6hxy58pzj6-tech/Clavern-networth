@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚚 Truck Fleet Commander | Rescue Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --secondary: #0f766e;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+        
+        .truck-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .truck-active { border-left-color: var(--success); }
+        .truck-maintenance { border-left-color: var(--warning); }
+        .truck-broken { border-left-color: var(--danger); }
+        
+        .driver-card {
+            background: white;
+            border-radius: 10px;
+            border-top: 3px solid;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .commission-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+        }
+        
+        .profit-badge {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-active { background: #10b981; }
+        .status-inactive { background: #dc2626; }
+        .status-maintenance { background: #f59e0b; }
+        
+        .trip-timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .trip-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+        
+        .trip-marker {
+            position: absolute;
+            left: -5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-truck text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">🚚 Truck Fleet Commander</h1>
+                        <p class="text-sm text-gray-500">Managing 6 trucks • 3T & 5T • 15% Commission</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">This Month</div>
+                        <div class="text-lg font-bold text-green-600">$8,450 Revenue</div>
+                    </div>
+                    <button onclick="addNewTrip()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-plus mr-2"></i>New Trip
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+        <!-- Top Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Total Revenue</div>
+                        <div class="text-2xl font-bold mt-2" id="totalRevenue">$24,850</div>
+                    </div>
+                    <div class="text-blue-500 text-2xl">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-sm text-gray-500">
+                    <span class="text-green-500">↑ 12%</span> from last month
+                </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Active Trucks</div>
+                        <div class="text-2xl font-bold mt-2">4/6</div>
+                    </div>
+                    <div class="text-green-500 text-2xl">
+                        <i class="fas fa-truck-moving"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="status-dot status-active"></span>
+                    <span class="status-dot status-maintenance"></span>
+                    <span class="status-dot status-inactive"></span>
+                </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Driver Commission</div>
+                        <div class="text-2xl font-bold mt-2" id="totalCommission">$3,728</div>
+                    </div>
+                    <div class="text-yellow-500 text-2xl">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-sm text-gray-500">
+                    15% of revenue • Paid weekly
+                </div>
+            </div>
+            
+            <div class="bg-white p-5 rounded-xl shadow">
+                <div class="flex justify-between">
+                    <div>
+                        <div class="text-gray-500 text-sm">Net Profit</div>
+                        <div class="text-2xl font-bold mt-2" id="netProfit">$12,425</div>
+                    </div>
+                    <div class="text-green-500 text-2xl">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <span class="px-2 py-1 profit-badge rounded-full text-xs font-bold">50% Margin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Left Column: Trucks & Drivers -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Trucks Management -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">
+                            <i class="fas fa-truck mr-2"></i>Fleet Management (6 Trucks)
+                        </h2>
+                        <button onclick="addMaintenance()" class="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded">
+                            <i class="fas fa-tools mr-1"></i>Schedule Maintenance
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Truck 1 -->
+                        <div class="truck-card truck-active p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-bold">Truck #001 • 5T</div>
+                                    <div class="text-sm text-gray-500">Registration: ABC123</div>
+                                    <div class="mt-2">
+                                        <span class="status-dot status-active"></span>
+                                        <span class="text-sm text-green-600">On Route: Harare→Bulawayo</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold text-blue-600">$1,850</div>
+                                    <div class="text-sm text-gray-500">This month</div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-between text-sm">
+                                <div>
+                                    <div class="text-gray-500">Driver:</div>
+                                    <div class="font-medium">John Moyo</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Next Service:</div>
+                                    <div class="font-medium">15 days</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Fuel:</div>
+                                    <div class="font-medium text-green-600">85%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Truck 2 -->
+                        <div class="truck-card truck-maintenance p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-bold">Truck #002 • 3T</div>
+                                    <div class="text-sm text-gray-500">Registration: DEF456</div>
+                                    <div class="mt-2">
+                                        <span class="status-dot status-maintenance"></span>
+                                        <span class="text-sm text-yellow-600">Maintenance: Brakes</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold text-blue-600">$1,200</div>
+                                    <div class="text-sm text-gray-500">This month</div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-between text-sm">
+                                <div>
+                                    <div class="text-gray-500">Driver:</div>
+                                    <div class="font-medium">Peter Chido</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Repair Cost:</div>
+                                    <div class="font-medium text-red-600">$350</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Ready In:</div>
+                                    <div class="font-medium">2 days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Truck 3 -->
+                        <div class="truck-card truck-active p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-bold">Truck #003 • 5T</div>
+                                    <div class="text-sm text-gray-500">Registration: GHI789</div>
+                                    <div class="mt-2">
+                                        <span class="status-dot status-active"></span>
+                                        <span class="text-sm text-green-600">Available</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold text-blue-600">$2,100</div>
+                                    <div class="text-sm text-gray-500">This month</div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-between text-sm">
+                                <div>
+                                    <div class="text-gray-500">Driver:</div>
+                                    <div class="font-medium">Tinashe K.</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Next Service:</div>
+                                    <div class="font-medium">30 days</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Fuel:</div>
+                                    <div class="font-medium text-green-600">60%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Truck 4 -->
+                        <div class="truck-card truck-broken p-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="font-bold">Truck #004 • 3T</div>
+                                    <div class="text-sm text-gray-500">Registration: JKL012</div>
+                                    <div class="mt-2">
+                                        <span class="status-dot status-inactive"></span>
+                                        <span class="text-sm text-red-600">Broken: Engine</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold text-blue-600">$0</div>
+                                    <div class="text-sm text-gray-500">This month</div>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-between text-sm">
+                                <div>
+                                    <div class="text-gray-500">Driver:</div>
+                                    <div class="font-medium">Unassigned</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Repair Cost:</div>
+                                    <div class="font-medium text-red-600">$1,200</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Ready In:</div>
+                                    <div class="font-medium">7 days</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drivers & Commission -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-6">
+                        <i class="fas fa-users mr-2"></i>Drivers & Commission (15%)
+                    </h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Driver</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Truck</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Trips</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Revenue</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Commission (15%)</th>
+                                    <th class="text-left p-3 text-sm font-medium text-gray-700">Paid</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-blue-600 font-bold">JM</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">John Moyo</div>
+                                                <div class="text-xs text-gray-500">+263 77 123 4567</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-3">#001 (5T)</td>
+                                    <td class="p-3">8 trips</td>
+                                    <td class="p-3 font-bold">$1,850</td>
+                                    <td class="p-3">
+                                        <div class="font-bold text-green-600">$277.50</div>
+                                        <div class="text-xs text-gray-500">15% of revenue</div>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                            <i class="fas fa-check mr-1"></i>Paid
+                                        </span>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-green-600 font-bold">PC</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Peter Chido</div>
+                                                <div class="text-xs text-gray-500">+263 77 234 5678</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-3">#002 (3T)</td>
+                                    <td class="p-3">6 trips</td>
+                                    <td class="p-3 font-bold">$1,200</td>
+                                    <td class="p-3">
+                                        <div class="font-bold text-green-600">$180.00</div>
+                                        <div class="text-xs text-gray-500">Due Friday</div>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                                            <i class="fas fa-clock mr-1"></i>Pending
+                                        </span>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="p-3">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-purple-600 font-bold">TK</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Tinashe K.</div>
+                                                <div class="text-xs text-gray-500">+263 77 345 6789</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-3">#003 (5T)</td>
+                                    <td class="p-3">10 trips</td>
+                                    <td class="p-3 font-bold">$2,100</td>
+                                    <td class="p-3">
+                                        <div class="font-bold text-green-600">$315.00</div>
+                                        <div class="text-xs text-gray-500">15% of revenue</div>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                            <i class="fas fa-check mr-1"></i>Paid
+                                        </span>
+                                    </td>
+                                </tr>
+                                
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                                <span class="text-red-600 font-bold">?</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Unassigned</div>
+                                                <div class="text-xs text-gray-500">Truck #004 idle</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-3">#004 (3T)</td>
+                                    <td class="p-3">0 trips</td>
+                                    <td class="p-3 font-bold">$0</td>
+                                    <td class="p-3">
+                                        <div class="font-bold text-gray-400">$0.00</div>
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                                            N/A
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-6 p-4 commission-card">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-bold">Total Commission This Month</div>
+                                <div class="text-sm text-gray-600">15% of $24,850 revenue</div>
+                            </div>
+                            <div class="text-2xl font-bold text-green-700">$3,728</div>
+                        </div>
+                        <div class="mt-3 text-sm">
+                            <div class="flex justify-between">
+                                <span>Next payout:</span>
+                                <span class="font-bold">Friday, 5PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Payment method:</span>
+                                <span class="font-bold">Ecocash</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Analytics & Quick Actions -->
+            <div class="space-y-6">
+                <!-- Commission Calculator -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">
+                        <i class="fas fa-calculator mr-2"></i>Commission Calculator
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">Trip Revenue ($)</label>
+                            <input type="number" id="tripRevenue" placeholder="e.g., 500" 
+                                   class="w-full p-3 border border-gray-300 rounded-lg" 
+                                   oninput="calculateCommission()">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm text-gray-600 mb-2">Commission Rate</label>
+                            <div class="flex items-center">
+                                <input type="range" id="commissionRate" min="5" max="30" value="15" 
+                                       class="flex-1 mr-4" oninput="updateRate()">
+                                <span id="rateDisplay" class="font-bold text-lg text-blue-600">15%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <div class="text-center mb-2">
+                                <div class="text-3xl font-bold text-blue-600" id="commissionResult">$75.00</div>
+                                <div class="text-sm text-gray-600">Driver Commission</div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="flex justify-between">
+                                    <span>Your Share (85%):</span>
+                                    <span class="font-bold" id="ownerShare">$425.00</span>
+                                </div>
+                                <div class="flex justify-between mt-1">
+                                    <span>Driver Share (15%):</span>
+                                    <span class="font-bold text-green-600" id="driverShare">$75.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button onclick="addCommissionPayment()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                            <i class="fas fa-money-check-alt mr-2"></i>Record Commission Payment
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Financial Summary -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">Financial Summary</h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span>Total Revenue:</span>
+                            <span class="font-bold">$24,850</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Driver Commissions:</span>
+                            <span class="font-bold text-red-600">-$3,728</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Fuel Costs:</span>
+                            <span class="font-bold text-red-600">-$4,200</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Maintenance:</span>
+                            <span class="font-bold text-red-600">-$1,550</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Other Expenses:</span>
+                            <span class="font-bold text-red-600">-$947</span>
+                        </div>
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between font-bold text-lg">
+                                <span>Net Profit:</span>
+                                <span class="text-green-600">$12,425</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
+                    
+                    <div class="space-y-3">
+                        <button onclick="addNewTrip()" class="w-full text-left p-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">
+                            <i class="fas fa-road mr-2"></i>Record New Trip
+                        </button>
+                        
+                        <button onclick="payDriverCommission()" class="w-full text-left p-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100">
+                            <i class="fas fa-money-bill-wave mr-2"></i>Pay Driver Commission
+                        </button>
+                        
+                        <button onclick="scheduleMaintenance()" class="w-full text-left p-3 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100">
+                            <i class="fas fa-tools mr-2"></i>Schedule Maintenance
+                        </button>
+                        
+                        <button onclick="addNewDriver()" class="w-full text-left p-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100">
+                            <i class="fas fa-user-plus mr-2"></i>Add New Driver
+                        </button>
+                        
+                        <button onclick="generateReport()" class="w-full text-left p-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">
+                            <i class="fas fa-file-alt mr-2"></i>Generate Monthly Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Trips -->
+        <div class="bg-white rounded-xl shadow p-6 mb-6">
+            <h2 class="text-xl font-bold mb-6">
+                <i class="fas fa-history mr-2"></i>Recent Trips
+            </h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="text-left p-3 text-sm">Date</th>
+                            <th class="text-left p-3 text-sm">Truck</th>
+                            <th class="text-left p-3 text-sm">Route</th>
+                            <th class="text-left p-3 text-sm">Driver</th>
+                            <th class="text-left p-3 text-sm">Revenue</th>
+                            <th class="text-left p-3 text-sm">Commission</th>
+                            <th class="text-left p-3 text-sm">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3">Today</td>
+                            <td class="p-3">#001 (5T)</td>
+                            <td class="p-3">Harare → Bulawayo</td>
+                            <td class="p-3">John Moyo</td>
+                            <td class="p-3 font-bold">$350</td>
+                            <td class="p-3">$52.50</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                                    In Progress
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3">Yesterday</td>
+                            <td class="p-3">#003 (5T)</td>
+                            <td class="p-3">Harare → Mutare</td>
+                            <td class="p-3">Tinashe K.</td>
+                            <td class="p-3 font-bold">$280</td>
+                            <td class="p-3">$42.00</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                    Completed
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3">2 days ago</td>
+                            <td class="p-3">#002 (3T)</td>
+                            <td class="p-3">Harare → Gweru</td>
+                            <td class="p-3">Peter Chido</td>
+                            <td class="p-3 font-bold">$220</td>
+                            <td class="p-3">$33.00</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                    Completed
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3">3 days ago</td>
+                            <td class="p-3">#001 (5T)</td>
+                            <td class="p-3">Bulawayo → Harare</td>
+                            <td class="p-3">John Moyo</td>
+                            <td class="p-3 font-bold">$320</td>
+                            <td class="p-3">$48.00</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                    Paid
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="font-bold">🚚 Truck Fleet Commander</div>
+                    <div class="text-sm text-gray-400">Turning failing fleets into profitable operations</div>
+                </div>
+                <div class="text-sm text-gray-400">
+                    <div>6 Trucks • 15% Commission • Real-time Tracking</div>
+                    <div class="mt-1">Data updates every 5 minutes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Initialize charts
+        function initializeCharts() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [
+                        {
+                            label: 'Revenue',
+                            data: [4500, 5200, 6100, 9050],
+                            backgroundColor: '#3b82f6',
+                        },
+                        {
+                            label: 'Profit',
+                            data: [2250, 2600, 3050, 4525],
+                            backgroundColor: '#10b981',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        // Commission Calculator
+        function calculateCommission() {
+            const revenue = parseFloat(document.getElementById('tripRevenue').value) || 0;
+            const rate = parseFloat(document.getElementById('commissionRate').value) / 100;
+            
+            const commission = revenue * rate;
+            const ownerShare = revenue - commission;
+            
+            document.getElementById('commissionResult').textContent = '$' + commission.toFixed(2);
+            document.getElementById('ownerShare').textContent = '$' + ownerShare.toFixed(2);
+            document.getElementById('driverShare').textContent = '$' + commission.toFixed(2);
+        }
+
+        function updateRate() {
+            const rate = document.getElementById('commissionRate').value;
+            document.getElementById('rateDisplay').textContent = rate + '%';
+            calculateCommission();
+        }
+
+        // Action Functions
+        function addNewTrip() {
+            const trip = prompt('Enter trip details (Route, Amount):\nExample: Harare→Bulawayo, $350');
+            if (trip) {
+                alert('Trip recorded successfully!');
+                // In real app: Add to database and refresh UI
+            }
+        }
+
+        function payDriverCommission() {
+            const driver = prompt('Which driver are you paying? (Enter name)');
+            const amount = prompt('Commission amount:');
+            if (driver && amount) {
+                alert(`✅ Paid $${amount} to ${driver} via Ecocash.`);
+                // In real app: Update payment status
+            }
+        }
+
+        function scheduleMaintenance() {
+            const truck = prompt('Truck number (e.g., #001):');
+            const issue = prompt('Maintenance required:');
+            const cost = prompt('Estimated cost:');
+            
+            if (truck && issue && cost) {
+                alert(`Maintenance scheduled for ${truck}:\n${issue}\nEstimated: $${cost}`);
+                // In real app: Add to maintenance schedule
+            }
+        }
+
+        function addNewDriver() {
+            const name = prompt('Driver full name:');
+            const phone = prompt('Phone number:');
+            const truck = prompt('Assign to truck (e.g., #001):');
+            
+            if (name && phone && truck) {
+                alert(`Driver ${name} added!\nPhone: ${phone}\nAssigned to: ${truck}`);
+                // In real app: Add to database
+            }
+        }
+
+        function generateReport() {
+            const report = `
+MONTHLY FLEET REPORT
+====================
+Date: ${new Date().toLocaleDateString()}
+
+FLEET STATUS:
+• Active Trucks: 4/6
+• In Maintenance: 1
+• Broken: 1
+
+FINANCIAL SUMMARY:
+• Total Revenue: $24,850
+• Driver Commission: $3,728 (15%)
+• Total Expenses: $10,697
+• Net Profit: $12,425 (50% margin)
+
+TOP PERFORMERS:
+1. Truck #003: $2,100 revenue
+2. Truck #001: $1,850 revenue
+3. Truck #002: $1,200 revenue
+
+RECOMMENDATIONS:
+1. Repair Truck #004 immediately
+2. Increase trips for 3T trucks
+3. Schedule preventive maintenance
+            `;
+            
+            alert(report);
+            console.log(report);
+        }
+
+        function addCommissionPayment() {
+            const driver = prompt('Driver name:');
+            const amount = prompt('Amount:');
+            const method = prompt('Payment method (Ecocash/Bank/Cash):');
+            
+            if (driver && amount && method) {
+                alert(`✅ Commission payment recorded:\n${driver}: $${amount} via ${method}`);
+                // In real app: Update database
+            }
+        }
+
+        function addMaintenance() {
+            const truck = prompt('
